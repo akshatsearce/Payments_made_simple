@@ -2,12 +2,16 @@ import express from "express"
 import zod from "zod"
 import jwt from "jsonwebtoken"
 import { authMiddleware } from "../middleware"
-
+import { Request , Response} from "express"
 import { JWT_SECRET } from "../config"
 import { User, Account } from "../db"
 
 
 export const router = express.Router()
+
+interface AuthRequest extends Request{
+    userId?: string
+}
 
 const signupSchema= zod.object({
     username: zod.string().email(),
@@ -27,7 +31,7 @@ const updateSchema= zod.object({
     lastname: zod.string().optional()
 })
 
-router.post("/signup" ,async (req,res)=>{
+router.post("/signup" ,async (req :Request ,res :Response)=>{
 
     const body= req.body
     const {success} = signupSchema.safeParse(req.body)
@@ -67,7 +71,7 @@ router.post("/signup" ,async (req,res)=>{
 
 })
 
-router.post("/signin" ,async (req,res)=>{
+router.post("/signin" ,async (req : Request,res : Response)=>{
     const body = req.body
     const {success} = signinSchema.safeParse(req.body)
 
@@ -100,7 +104,7 @@ router.post("/signin" ,async (req,res)=>{
 
 
 
-router.put("/", authMiddleware, async(req,res)=>{
+router.put("/", authMiddleware, async(req : AuthRequest,res : Response)=>{
     const {success} = updateSchema.safeParse(req.body)
     if(!success){
         return res.status(403).json({
@@ -118,7 +122,7 @@ router.put("/", authMiddleware, async(req,res)=>{
 
 })
 
-router.get("/bulk", authMiddleware, async(req,res)=>{
+router.get("/bulk", authMiddleware, async(req : AuthRequest,res : Response)=>{
     const filter= req.query.filter || ""
 
     const filtered_users= await User.find({

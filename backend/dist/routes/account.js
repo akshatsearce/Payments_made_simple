@@ -17,16 +17,21 @@ const express_1 = __importDefault(require("express"));
 const zod_1 = __importDefault(require("zod"));
 const middleware_1 = require("../middleware");
 const db_1 = require("../db");
+const mongoose_1 = __importDefault(require("mongoose"));
 exports.router = express_1.default.Router();
 exports.router.get("/balance", middleware_1.authMiddleware, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const account = yield db_1.Account.findOne({
         userId: req.userId
     });
+    if (!account) {
+        return res.status(400).json({
+            msg: "No Account found"
+        });
+    }
     res.json({
         balance: account.balance
     });
 }));
-const mongoose_1 = __importDefault(require("mongoose"));
 const transferSchema = zod_1.default.object({
     to: zod_1.default.string(),
     amount: zod_1.default.number()

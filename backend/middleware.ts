@@ -1,12 +1,12 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { JWT_SECRET } from './config'
 import { Request, Response, NextFunction } from 'express'
 
-interface CustomJwtPayload extends jwt.JwtPayload {
-  userId: string;
+interface AuthResponse extends Request {
+  userId?: string;
 }
 
-export const authMiddleware= (req : Request,res :Response,next : NextFunction)=>{
+export const authMiddleware= (req : AuthResponse, res :Response,next : NextFunction)=>{
     const auth_header = req.headers.authorization
 
     if(!auth_header || !auth_header.startsWith('Bearer')){
@@ -18,7 +18,7 @@ export const authMiddleware= (req : Request,res :Response,next : NextFunction)=>
     const token= auth_header.split(' ')[1]
 
     try{
-        const decoded = jwt.verify(token,JWT_SECRET) as CustomJwtPayload
+        const decoded = <JwtPayload>jwt.verify(token,JWT_SECRET)
         req.userId= decoded.userId
         next()             
 

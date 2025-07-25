@@ -1,17 +1,29 @@
 import express from "express"
+import { Response , Request } from "express"
 import zod from "zod"
 import jwt from "jsonwebtoken"
 import { authMiddleware } from "../middleware"
 import { JWT_SECRET } from "../config"
 import { User, Account } from "../db"
+import mongoose from "mongoose"
 
 export const router= express.Router()
 
-router.get("/balance", authMiddleware,async (req,res)=>{
+interface AuthRequest extends Request{
+    userId?: string
+}
+
+
+router.get("/balance", authMiddleware,async (req: AuthRequest ,res : Response )=>{
 
     const account=await Account.findOne({
         userId: req.userId
     })
+    if(!account){
+        return res.status(400).json({
+            msg: "No Account found"
+        })
+    }
 
     res.json({
         balance: account.balance
@@ -19,13 +31,12 @@ router.get("/balance", authMiddleware,async (req,res)=>{
 
 })
 
-import mongoose from "mongoose"
 const transferSchema= zod.object({
     to: zod.string(),
     amount: zod.number()
 })
 
-router.post("/transfer",authMiddleware,async (req,res)=>{
+router.post("/transfer",authMiddleware,async (req: AuthRequest ,res : Response)=>{
 
     const {success}= transferSchema.safeParse(req.body)
     if(!success){
