@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
+import { signIn, signOut } from "next-auth/react"
 
 export default function Home() {
 
@@ -18,16 +19,16 @@ export default function Home() {
       <div className="flex items-center space-x-4">
         <Button
           variant="ghost"
-          onClick={()=>{router.push("/signin")}}
+          onClick={()=>{signIn()}}
           className="text-white hover:text-zinc-300"
         >
           Sign In
         </Button>
         <Button
-          onClick={() => router.push("/signup")}
+          onClick={()=> {signOut()}}
           className="bg-white hover:bg-zinc-500 text-zinc-900 rounded-md"
         >
-          Sign Up
+          Sign Out
         </Button>
       </div>
     </nav>

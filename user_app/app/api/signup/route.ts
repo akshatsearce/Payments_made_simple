@@ -3,7 +3,7 @@ import { prisma } from '@/lib/prisma'
 
 
 const UserSchema = z.object({
-    phone_number: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'),
+    phone_number: z.string().min(10).max(10),
     password: z.string().min(8, 'Password must be at least 8 characters'),
     fullname: z.string().min(1, 'Full name is required')
 });
@@ -16,7 +16,7 @@ export const POST = async(req : Request)=>{
         const result = UserSchema.safeParse(body)
 
         if (!result.success) {
-            return new Response(JSON.stringify({ errors: result.error.flatten() }), {
+            return new Response(JSON.stringify({ errors: result.error }), {
                 status: 400,
                 headers: { 'Content-Type': 'application/json' }
             });
