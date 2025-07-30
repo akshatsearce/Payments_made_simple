@@ -1,7 +1,8 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from "@/lib/prisma"
-
+import bcrypt from 'bcrypt';
 import { z } from "zod";
+import { Session } from 'inspector/promises';
 
 
 const CredSchema = z.object({
@@ -33,7 +34,13 @@ export const NEXT_AUTH = {
                             id: true,
                             phone_number: true,
                             fullname: true,
-                            password: true
+                            password: true,
+                            account: {
+                                select: {
+                                    id: true,
+                                    balance: true,
+                                },
+                            },
                         }
                     })
 
@@ -41,8 +48,8 @@ export const NEXT_AUTH = {
                         console.log('No user found with phone number ', phone_number)
                         return null
                     }
-
-                    if(user.password !== password){
+                    const isPasswordValid = await bcrypt.compare(password, user.password)
+                    if(!isPasswordValid){
                         console.log("Invalid Password")
                         return null
                     }
@@ -50,7 +57,11 @@ export const NEXT_AUTH = {
                     return {
                         id: user.id.toString(),
                         phone_number: user.phone_number,
-                        fullname: user.fullname
+                        fullname: user.fullname,
+                        account:{
+                            id: user.account?.id,
+                            balance: user.account?.balance
+                        }
                     }
 
                 }catch(e){
@@ -64,5 +75,29 @@ export const NEXT_AUTH = {
     secret: process.env.NEXTAUTH_SECRET,
     pages: {
         signIn: '/signin',
+    },
+    callbacks:{
+        async session({ session , user, token }: {session:any , user: any, token: any}) {
+            if (token) {
+                session.user = {
+                ...session.user,
+                id: token.id,
+                phone_number: token.phone_number,
+                fullname: token.fullname,
+                account: token.account,
+                };
+            }
+            return session;
+        },
+        async jwt({ token, user }:{token:any , user:any}) {
+        // On login, persist user info to the token
+            if (user) {
+                token.id = user.id;
+                token.phone_number = user.phone_number;
+                token.fullname = user.fullname;
+                token.account = user.account;
+            }
+            return token;
+        },
     }
 }

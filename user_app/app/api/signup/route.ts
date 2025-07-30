@@ -1,6 +1,6 @@
 import {z} from 'zod';
 import { prisma } from '@/lib/prisma'
-
+import bcrypt from 'bcrypt';
 
 const UserSchema = z.object({
     phone_number: z.string().min(10).max(10),
@@ -35,13 +35,27 @@ export const POST = async(req : Request)=>{
             });
         }
 
-        const newUser = await prisma.user.create({
-            data: {
-                phone_number,
-                password, // Note: In production, you should hash the password before storing
-                fullname
-            }
-        });
+        const hashedPassword = await bcrypt.hash(password, 10)
+
+        const newUser = await prisma.$transaction(async(tx)=>{
+            const user = await tx.user.create({
+                data:{
+                    phone_number,
+                    fullname,
+                    password: hashedPassword
+                }
+            })
+            const randomBalance = Math.random() * 100000;
+
+            await tx.account.create({
+                data:{
+                    user_id: user.id,
+                    balance: randomBalance
+                }
+            })
+
+            return user
+        })
 
         console.log('New user created:', newUser);
 

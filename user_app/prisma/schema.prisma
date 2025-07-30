@@ -13,9 +13,30 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id Int @id @default(autoincrement())
-  phone_number String @unique
-  fullname String?
-  password String
+model User {
+  id           Int          @id @default(autoincrement())
+  phone_number String       @unique
+  fullname     String?
+  password     String
+  account      Account?     // One-to-one relation to Account table
+}
+
+model Account {
+  id         Int          @id @default(autoincrement())
+  user_id    Int          @unique // Ensures one-to-one with User
+  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  balance    Float        @default(0.0) // Current balance
+  sent_transactions Transaction[] @relation("SentTransactions") // Transactions where this account is the sender
+  received_transactions Transaction[] @relation("ReceivedTransactions") // Transactions where this account is the receiver
+}
+
+model Transaction {
+  id                Int      @id @default(autoincrement())
+  sender_account_id Int
+  receiver_account_id Int?
+  sender_account    Account  @relation("SentTransactions", fields: [sender_account_id], references: [id], onDelete: Restrict)
+  receiver_account  Account? @relation("ReceivedTransactions", fields: [receiver_account_id], references: [id], onDelete: Restrict)
+  amount            Float
+  transaction_type  String   // e.g., TRANSFER, PAYMENT, TOPUP
+  status            String   @default("PENDING") // PENDING, COMPLETED, FAILED
 }
