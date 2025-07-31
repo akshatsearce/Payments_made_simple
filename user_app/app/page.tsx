@@ -14,8 +14,11 @@ export default async function Home() {
     redirect('/signin');
   }
 
-  const info = prisma.user.addre
   return (<div>
+    <NavBar/>
+    <div className="text-6xl">
+      Payments Made Simple
+    </div>
     </div>
   )
 }
