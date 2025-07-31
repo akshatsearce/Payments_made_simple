@@ -15,7 +15,7 @@ export default async function Home() {
   }
 
   return (<div>
-    <NavBar/>
+    {/* <NavBar/> */}
     <div className="text-6xl">
       Payments Made Simple
     </div>
