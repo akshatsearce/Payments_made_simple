@@ -83,7 +83,7 @@ export const NEXT_AUTH = {
                 ...session.user,
                 id: token.id,
                 phone_number: token.phone_number,
-                fullname: token.fullname,
+                name: token.fullname,
                 account: token.account,
                 };
             }
