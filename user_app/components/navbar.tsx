@@ -28,7 +28,7 @@ export default function NavBar() {
                     <>
                         {/* Display user's full name or email */}
                         <span className="text-white text-md font-medium">
-                            Welcome, {session.user?.fullname || "User"}!
+                            Welcome, {session.user?.name || "User"}!
                         </span>
                         {/* Sign Out Button */}
                         <Button
