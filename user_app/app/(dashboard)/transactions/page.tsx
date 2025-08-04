@@ -1,8 +1,12 @@
 import { OnRampTransactions } from "@/components/OnRampTransactionCard";
+import GetAllTransaction from "@/lib/actions/getTransactions";
 
-export default function(){
-    return <div>
+export default async function(){
+
+    const transactions = await GetAllTransaction()
+    
+    return <div className="w-full">
         Transactions
-        <OnRampTransactions transactions={[]}/>
+        <OnRampTransactions transactions={transactions}/>
     </div>
 }
