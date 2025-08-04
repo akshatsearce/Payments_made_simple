@@ -3,9 +3,12 @@
 import React, { useState, ReactNode } from 'react';
 import {ChevronLeft, X, Plus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
-
+import { usePathname } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 interface NavItemProps {
+  href?: string;
+  onClick?: ()=>{};
   icon: ReactNode;
   children: ReactNode;
   active?: boolean;
@@ -13,22 +16,43 @@ interface NavItemProps {
   hasAction?: boolean;
 }
  
-export const NavItem: React.FC<NavItemProps> = ({ icon, children, active, notificationCount, hasAction }) => (
-  <div className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200 ${active ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800'}`}>
-    {icon}
-    <span className="ml-4 flex-1 font-medium">{children}</span>
-    {notificationCount && (
-      <span className="bg-yellow-400 text-gray-900 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-        {notificationCount}
-      </span>
-    )}
-    {hasAction && (
-       <div className="bg-gray-700 rounded-md p-0.5">
-         <Plus size={16} className="text-gray-400" />
-       </div>
-    )}
-  </div>
-);
+export const NavItem: React.FC<NavItemProps> = ({ href, icon, children, notificationCount, hasAction ,onClick }) => {
+  const pathname = usePathname(); // Get the current URL path
+  // For Pages Router, you would use: const { asPath } = useRouter();
+  const router = useRouter()
+  const active = pathname === href;
+
+  return (
+    <div onClick={()=>{
+      if (href){
+        router.push(href)
+      }
+      if(onClick)
+      {
+        onClick()
+      }
+    }}>
+      <div
+        className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200 ${
+          active ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800'
+        }`}
+      >
+        {icon}
+        <span className="ml-4 flex-1 font-medium">{children}</span>
+        {notificationCount && (
+          <span className="bg-yellow-400 text-gray-900 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+            {notificationCount}
+          </span>
+        )}
+        {hasAction && (
+          <div className="bg-gray-700 rounded-md p-0.5">
+            <Plus size={16} className="text-gray-400" />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export const UpdateCard: React.FC = () => {
   const [isVisible, setIsVisible] = useState<boolean>(true);
@@ -81,7 +105,6 @@ export default function SideBar({fullname ,navigationChildren, footNavigationChi
             </div>
             <div className="flex items-center">
               <span className="bg-yellow-400 text-gray-900 text-[8px] font-bold px-2 py-0.5 rounded-full mr-3">USER</span>
-              <ChevronLeft size={20} className="text-gray-400" />
             </div>
           </div>
 

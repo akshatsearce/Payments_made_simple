@@ -1,7 +1,7 @@
 'use client'
 import SideBar from "@/components/SideBarComponent";
 import { JSX } from "react";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { NavItem } from "@/components/SideBarComponent";
 import { Wallet , ArrowRightLeft , Bell , LineChart , Newspaper, HelpCircle, Settings, LogOut} from "lucide-react";
 
@@ -18,17 +18,17 @@ export default function Layout({
     <div className="flex">
       <SideBar fullname={fullname} navigationChildren = {
         <>
-        <NavItem icon={<Wallet size={20} />} active>Portfolio</NavItem>
-        <NavItem icon={<ArrowRightLeft size={20} />} hasAction>Transactions</NavItem>
-        <NavItem icon={<Bell size={20} />} notificationCount={4}>Notifications</NavItem>
-        <NavItem icon={<LineChart size={20} />}>Market</NavItem>
-        <NavItem icon={<Newspaper size={20} />}>News</NavItem> 
+        <NavItem icon={<Wallet size={20} />} href="/dashboard">Portfolio</NavItem>
+        <NavItem icon={<ArrowRightLeft size={20}  />} href="/transactions" hasAction>Transactions</NavItem>
+        <NavItem icon={<Bell size={20} />} notificationCount={4} href="/transfer" >Notifications</NavItem>
+        {/* <NavItem icon={<LineChart size={20} />} href="/dashboard">Market</NavItem>
+        <NavItem icon={<Newspaper size={20}/> } href="/dashboard">News</NavItem>  */}
         </>
       } footNavigationChild = {
         <>
-        <NavItem icon={<HelpCircle size={20} />}>Help</NavItem>
+        <NavItem icon={<HelpCircle size={20}/>}>Help</NavItem>
         <NavItem icon={<Settings size={20} />}>Settings</NavItem>
-        <NavItem icon={<LogOut size={20} />}>Sign Out</NavItem>
+        <NavItem icon={<LogOut size={20} />} onClick={signOut}>Sign Out</NavItem>
         </>
       }/>
       {children}
