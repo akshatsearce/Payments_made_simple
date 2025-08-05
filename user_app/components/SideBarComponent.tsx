@@ -89,7 +89,7 @@ interface SideBarProps {
 
 export default function SideBar({fullname ,navigationChildren, footNavigationChild }:SideBarProps){
   return (
-      <aside className="w-70 text-white min-h-screen font-sans bg-[#111111] p-4 flex flex-col justify-between">
+      <aside className="w-75 text-white min-h-screen font-sans bg-[#111111] p-4 flex flex-col justify-between">
         <div>
           {/* User Profile */}
           <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-800 cursor-pointer">

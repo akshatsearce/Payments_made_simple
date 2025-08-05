@@ -19,7 +19,7 @@ async function GetBalance() {
 
 export default async function(){
     const {balance} = await GetBalance()
-    return <div>
+    return <div className="w-screen">
         Dashboard
         <UserInfo balance={balance}/>
     </div>
