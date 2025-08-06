@@ -1,4 +1,4 @@
-import UserInfo from "@/components/userInfo";
+import ViewBalance from "@/components/balanceCard";
 import { NEXT_AUTH } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
@@ -20,7 +20,8 @@ async function GetBalance() {
 export default async function(){
     const {balance} = await GetBalance()
     return <div className="w-screen">
-        Dashboard
-        <UserInfo balance={balance}/>
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-cyan-400 to-emerald-400 p-4">
+        <ViewBalance balance={balance}/>
+        </div>
     </div>
 }

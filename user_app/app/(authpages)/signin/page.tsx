@@ -73,7 +73,7 @@ export default function SignIn() {
                   <Input
                     id="phone_number"
                     name="phone_number"
-                    type="text"
+                    type="number"
                     placeholder="+1234567890"
                     required
                   />

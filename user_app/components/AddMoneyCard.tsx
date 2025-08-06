@@ -1,115 +1,105 @@
-"use client"; // This directive is correctly placed
-
-import { Button } from "./ui/button";
+'use client'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card"; // Import specific Card components for better structure
-// import { Center } from "./ui/center"; // This component might not be necessary with proper flex/grid
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select"; // Import specific Select components for shadcn/ui
-import { useState } from "react";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label"; // Import Label for better accessibility and styling
+} from "@/components/ui/select"
+import { ArrowDown, ArrowRight, Move, MoveUpRight } from "lucide-react"
+import { useState } from "react"
+import { p2pTransfer } from "@/lib/actions/p2pTransfer"
 
-const SUPPORTED_BANKS = [
-  {
-    name: "HDFC Bank",
-    redirectUrl: "https://netbanking.hdfcbank.com",
-  },
-  {
-    name: "Axis Bank",
-    redirectUrl: "https://www.axisbank.com/",
-  },
-  // Add more banks as needed
-];
-
-export const AddMoney = () => {
-  const [redirectUrl, setRedirectUrl] = useState(
-    SUPPORTED_BANKS[0]?.redirectUrl || ""
-  );
-  const [amount, setAmount] = useState(""); // State to hold the input amount
-
-  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // Basic validation: allow only numbers and a single decimal point
-    const value = e.target.value;
-    if (/^\d*\.?\d*$/.test(value) || value === "") {
-      setAmount(value);
-    }
-  };
-
-  const handleAddMoney = () => {
-    // You'd typically want to send the amount and selected bank
-    // to your backend for processing before redirecting.
-    // For now, we'll just redirect as per your original code.
-    if (redirectUrl) {
-      window.location.href = redirectUrl;
-    } else {
-      console.warn("No redirect URL selected for the bank.");
-      // Optionally show a user-friendly error message
-    }
-  };
+export default function AddMoney() {
+  // In a real app, these would be managed with React state (e.g., useState)
+  const [amount , setAmount] = useState(0)
+  const [phoneNumber, setPhoneNumber] = useState("")
+  const [error, setError] = useState("")
 
   return (
-    // <div className="flex justify-center items-center min-h-screen w-screen bg-gray-100"> {/* Added a wrapper for centering and background */}
-      <Card className="w-full max-w-sm"> {/* Set a max-width for the card */}
+      <Card className="w-full max-w-md bg-[#111111] border-slate-800 text-slate-50">
         <CardHeader>
-          <CardTitle>Add Money</CardTitle>
-          <CardDescription>
-            Choose your bank and enter the amount to add funds.
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">
+            Send Money in <span className="text-lime-300">3 Easy Steps!</span>
+          </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="grid gap-4"> {/* Use grid for better spacing */}
-            <div className="grid gap-2">
-              <Label htmlFor="amount">Amount</Label> {/* Use Label for input */}
-              <Input
-                id="amount"
-                type="text" // Change to text for better controlled input (allowing decimal)
-                placeholder="e.g., 100.00"
-                value={amount}
-                onChange={handleAmountChange}
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label htmlFor="bank-select">Bank</Label> {/* Label for select */}
-              <Select
-                onValueChange={(value) => {
-                  setRedirectUrl(
-                    SUPPORTED_BANKS.find((x) => x.name === value)?.redirectUrl ||
-                      ""
-                  );
-                }}
-                defaultValue={SUPPORTED_BANKS[0]?.name} // Set a default selected value
-              >
-                <SelectTrigger id="bank-select">
-                  <SelectValue placeholder="Select a bank" />
+        <CardContent className="grid gap-6">
+          {/* You're Sending Section */}
+          <div className="grid gap-2">
+            <Label htmlFor="sending-amount" className="text-slate-400">
+              You're Sending
+            </Label>
+            <div className="flex items-center rounded-md border border-slate-700 bg-[#0d1117] focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 focus-within:ring-offset-[#161b22]">
+              <span className="pl-3 text-slate-400">₹</span>
+              <Input id="amount" type="number" placeholder="0" 
+              onChange={(e)=>{setAmount(Number(e.target.value))}}
+              className="flex-1 border-0 bg-transparent text-2xl font-bold text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0"/>
+              <Select defaultValue="INR">
+                <SelectTrigger className="w-[110px] border-0 border-l border-slate-700 bg-transparent text-base font-medium text-white focus:ring-0 focus:ring-offset-0 rounded-l-none">
+                  <SelectValue placeholder="Currency" />
                 </SelectTrigger>
-                <SelectContent>
-                  {SUPPORTED_BANKS.map((bank) => (
-                    <SelectItem key={bank.name} value={bank.name}>
-                      {bank.name}
-                    </SelectItem>
-                  ))}
+                <SelectContent className="bg-[#161b22] border-slate-700 text-white">
+                  <SelectItem value="INR">🇮🇳 INR</SelectItem>
+                  <SelectItem value="EUR">🇪🇺 EUR</SelectItem>
+                  <SelectItem value="GBP">🇬🇧 GBP</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-
-            <Button onClick={handleAddMoney} className="w-full mt-2"> {/* Full width button with margin-top */}
-              Add Money
-            </Button>
           </div>
+
+          {/* Separator */}
+          <div className="flex justify-center">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-700 bg-[#0d1117]">
+              <ArrowDown className="h-5 w-5 text-slate-400" />
+            </div>
+          </div>
+
+          {/* Recipient Receives Section */}
+          <div className="grid gap-2">
+            <Label htmlFor="recipient-receives" className="text-slate-400">
+              Recipient's Phone Number
+            </Label>
+            <div className="flex items-center rounded-md border border-slate-700 bg-[#0d1117]">
+              <Input
+                id="to"
+                type="number"
+                placeholder="90990xxxxx"
+                onChange={(e)=>{setPhoneNumber(e.target.value)}}
+                className="flex-1 border-0 bg-transparent text-2xl font-bold text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0"
+              />
+            </div>
+          </div>
+
+          {/* Send Money Button */}
+          {error && (
+              <div className="text-red-500 text-sm">{error}</div>
+          )}
+          <Button size="lg" 
+          className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-blue-700"
+          onClick={async()=>{
+            try {
+                const result = await p2pTransfer(phoneNumber, amount)
+                setError(result?.message)
+            } catch (err: any) {
+                setError(err?.message || "Transfer failed. Please try again.")
+            }
+          }}
+          >
+            Send Money
+            <div className="ml-2 flex items-center justify-center h-8 w-8 rounded-full bg-black">
+              <MoveUpRight className="h-6 w-6 text-white" />
+            </div>
+          </Button>
         </CardContent>
       </Card>
-    // </div>
-  );
-};
+  )
+}
