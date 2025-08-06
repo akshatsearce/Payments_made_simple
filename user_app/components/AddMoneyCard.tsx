@@ -84,7 +84,7 @@ export default function AddMoney() {
               <div className="text-red-500 text-sm">{error}</div>
           )}
           <Button size="lg" 
-          className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-blue-700"
+          className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-indigo-600"
           onClick={async()=>{
             try {
                 const result = await p2pTransfer(phoneNumber, amount)
