@@ -1,5 +1,5 @@
 import GetAllTransaction from "@/lib/actions/getTransactions";
-import { Search ,ChevronDown} from 'lucide-react';
+import { Search, ChevronDown } from 'lucide-react';
 
 export default async function () {
 
@@ -51,34 +51,52 @@ export default async function () {
 
                 {/* Transaction Table */}
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left">
+                    <table className="w-full text-left text-sm">
                         <thead className="text-xs text-gray-400 uppercase border-b border-gray-700">
                             <tr>
                                 <th scope="col" className="px-6 py-3">Transaction</th>
-                                <th scope="col" className="px-6 py-3">Total Value</th>
-                                {/* <th scope="col" className="px-6 py-3 text-right">Amount</th> */}
+                                <th scope="col" className="px-6 py-3">Amount</th>
+                                <th scope="col" className="px-6 py-3">Type</th>
+                                <th scope="col" className="px-6 py-3">Provider</th>
+                                <th scope="col" className="px-6 py-3">Date</th>
                                 <th scope="col" className="px-6 py-3 text-right">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {transactions.map((transaction, index) => (
-                                <tr key={index} className="border-b border-gray-800 hover:bg-gray-800/50">
+                            {transactions.map((transaction) => (
+                                <tr key={transaction.id} className="border-b border-gray-800 hover:bg-gray-800/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div>
-                                                <div className="font-semibold">{transaction.receiverName}</div>
+                                                <div className="font-semibold">
+                                                    {transaction.transaction_type === 'P2P'
+                                                        ? `${transaction.senderName} → ${transaction.receiverName}`
+                                                        : transaction.senderName}
+                                                </div>
                                                 <div className="text-sm text-gray-400">{transaction.transaction_type}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 font-semibold">₹{transaction.amount}</td>
+                                    <td className="px-6 py-4">{transaction.transaction_type}</td>
+                                    <td className="px-6 py-4">
+                                        {transaction.transaction_type === 'ONRAMP' ? transaction.provider : '-'}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {new Date(transaction.timestamp).toLocaleDateString('en-IN', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        })}
+                                    </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex items-center justify-end">
                                             <div className={`h-2.5 w-2.5 rounded-full mr-2 ${getStatusClass(transaction.status)}`}></div>
                                             {transaction.status}
                                         </div>
                                     </td>
-
                                 </tr>
                             ))}
                         </tbody>

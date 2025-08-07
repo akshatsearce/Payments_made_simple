@@ -5,79 +5,82 @@ import { prisma } from '@/lib/prisma'
 
 export async function p2pTransfer(to: string, amount: number) {
     try {
-        // Validate input
+
         if (!to || amount <= 0) {
             return { message: "Invalid recipient or amount" };
         }
 
-        // Get session and sender ID
         const session = await getServerSession(NEXT_AUTH);
         const from = session?.user?.id;
         if (!from) {
             return { message: "Unauthorized: Please log in" };
         }
 
-        // Start transaction
-        return await prisma.$transaction(async (tx) => {
-            // Find sender's account with user
-            const senderAccount = await tx.account.findUnique({
-                where: { user_id: Number(from) },
-                include: { user: true }
-            });
-
-            if (!senderAccount) {
-                throw new Error("Sender account not found");
+        const toUser = await prisma.user.findUnique({
+            where: {
+                number: to
+            },
+            select: {
+                id: true
             }
+        })
 
-            // Check if sending to self
-            if (senderAccount.user.phone_number === to) {
-                throw new Error("Cannot transfer to self");
-            }
+        if (toUser?.id == from) {
+            return { message: "Cannot transfer to yourself!" }
+        }
 
-            // Find recipient by phone number
-            const recipientAccount = await tx.account.findFirst({
-                where: { 
-                    user: { phone_number: to }
+        await prisma.$transaction(async(tx)=>{
+            await tx.$queryRaw`SELECT * FROM "Balance" WHERE "userId" = ${Number(from)} FOR UPDATE`
+
+            const fromBalance = await tx.balance.findUnique({
+                where:{
+                    userId: Number(from)
+                },
+                select:{
+                    amount: true
                 }
-            });
+            })
 
-            if (!recipientAccount) {
-                throw new Error("Recipient not found");
+            if(!fromBalance || fromBalance.amount < amount){
+                throw new Error('Insufficient Balance')
             }
 
-            // Check sufficient funds
-            if (senderAccount.balance < amount) {
-                throw new Error("Insufficient funds");
-            }
+            await tx.balance.update({
+                where:{
+                    userId: Number(from)
+                },
+                data:{
+                    amount: {decrement: amount}
+                }
+            })
 
-            // Update sender's balance
-            await tx.account.update({
-                where: { id: senderAccount.id },
-                data: { balance: { decrement: amount } }
-            });
+            await tx.balance.update({
+                where: {userId: Number(toUser?.id)},
+                data:{
+                    amount: {increment: amount}
+                }
+            })
 
-            // Update recipient's balance
-            await tx.account.update({
-                where: { id: recipientAccount.id },
-                data: { balance: { increment: amount } }
-            });
-
-            // Create transaction record
-            await tx.transaction.create({
+            await tx.p2pTransfer.create({
                 data: {
-                    sender_account_id: senderAccount.id,
-                    receiver_account_id: recipientAccount.id,
-                    amount,
-                    transaction_type: "TRANSFER",
-                    status: "COMPLETED"
+                    amount: amount,
+                    timestamp: new Date(),
+                    fromUserId: Number(from),
+                    toUserId: Number(toUser?.id),
                 }
-            });
+            })
 
-            return { message: "Transfer successful" };
-        });
-    } catch (error: any) {
+        })
         return { 
-            message: error.message || "Error processing transfer" 
+            status: 200,
+            message: "Transfer Successfull"
+        }
+
+    } catch (e) {
+        console.error("P2P Transfer Error:", e);
+        return { 
+            status: 400,
+            message: "Transfer failed. Please try again later." 
         };
     }
 }

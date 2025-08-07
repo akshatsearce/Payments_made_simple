@@ -23,7 +23,10 @@ export default function AddMoney() {
   // In a real app, these would be managed with React state (e.g., useState)
   const [amount , setAmount] = useState(0)
   const [phoneNumber, setPhoneNumber] = useState("")
-  const [error, setError] = useState("")
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
+  const [isloading, setIsloading] = useState<boolean>(false)
+
 
   return (
       <Card className="w-full max-w-md bg-[#111111] border-slate-800 text-slate-50">
@@ -81,18 +84,30 @@ export default function AddMoney() {
 
           {/* Send Money Button */}
           {error && (
-              <div className="text-red-500 text-sm">{error}</div>
+            <div className="text-red-500 text-sm">{error}</div>
+          )}
+          {success && (
+            <div className="text-green-400 text-sm">{success}</div>
           )}
           <Button size="lg" 
           className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-indigo-600"
           onClick={async()=>{
             try {
+                setError(null)
+                setSuccess(null)
+                setIsloading(true)
                 const result = await p2pTransfer(phoneNumber, amount)
-                setError(result?.message)
+                setIsloading(false)
+                if(result.status === 200){
+                  setSuccess(result.message)
+                }else{
+                  setError(result.message)
+                }
             } catch (err: any) {
                 setError(err?.message || "Transfer failed. Please try again.")
             }
           }}
+          disabled={isloading}
           >
             Send Money
             <div className="ml-2 flex items-center justify-center h-8 w-8 rounded-full bg-black">
