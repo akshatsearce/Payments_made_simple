@@ -1,6 +1,6 @@
 import Providers from "@/app/providers";
 import GetAllTransaction from "@/lib/actions/getTransactions";
-import { Search, ChevronDown } from 'lucide-react';
+import { Search, ChevronDown, MoveUpRight, MoveDownLeft } from 'lucide-react';
 
 export default async function () {
 
@@ -67,17 +67,21 @@ export default async function () {
                                 <tr key={transaction.id} className="border-b border-gray-800 hover:bg-gray-800/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div>
+                                            <div className="flex items-center gap-2">
+                                                {transaction.direction ? (
+                                                        <MoveDownLeft className="text-green-500" />
+                                                    ) : (
+                                                        <MoveUpRight className="text-red-500" />
+                                                    )}
                                                 <div className="font-semibold">
                                                     {transaction.transaction_type === 'P2P'
-                                                        ? `${transaction.senderName} → ${transaction.receiverName}`
+                                                        ? (transaction.direction ? transaction.senderName : transaction.receiverName)
                                                         : transaction.senderName}
                                                 </div>
-                                                <div className="text-sm text-gray-400">{transaction.transaction_type}</div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className={`px-6 py-4 font-semibold ${transaction.direction ? 'text-green-500': 'text-red-500'}`}>₹{transaction.amount}</td>
+                                    <td className={`px-6 py-4 font-semibold ${transaction.direction ? 'text-green-500' : 'text-red-500'}`}>₹{transaction.amount}</td>
                                     <td className="px-6 py-4">{transaction.transaction_type}</td>
                                     <td className="px-6 py-4">
                                         {transaction.provider}
