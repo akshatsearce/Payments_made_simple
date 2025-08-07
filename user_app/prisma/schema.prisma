@@ -14,29 +14,54 @@ datasource db {
 }
 
 model User {
-  id           Int          @id @default(autoincrement())
-  phone_number String       @unique
-  fullname     String?
-  password     String
-  account      Account?     // One-to-one relation to Account table
+  id                Int                 @id @default(autoincrement())
+  email             String?             @unique
+  name              String?
+  number            String              @unique
+  password          String
+  OnRampTransaction OnRampTransaction[]
+  Balance           Balance[]
+  sentTransfers     p2pTransfer[]       @relation(name: "FromUserRelation")
+  receivedTransfers p2pTransfer[]       @relation(name: "ToUserRelation")
 }
 
-model Account {
-  id         Int         @id @default(autoincrement())
-  user_id    Int          @unique // Ensures one-to-one with User
-  user       User         @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  balance    Float        @default(0.0) // Current balance
-  sent_transactions Transaction[] @relation("SentTransactions") // Transactions where this account is the sender
-  received_transactions Transaction[] @relation("ReceivedTransactions") // Transactions where this account is the receiver
+model Merchant {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
 }
 
-model Transaction {
-  id                Int      @id @default(autoincrement())
-  sender_account_id Int
-  receiver_account_id Int?
-  sender_account    Account  @relation("SentTransactions", fields: [sender_account_id], references: [id], onDelete: Restrict)
-  receiver_account  Account? @relation("ReceivedTransactions", fields: [receiver_account_id], references: [id], onDelete: Restrict)
-  amount            Float
-  transaction_type  String   // e.g., TRANSFER, PAYMENT, TOPUP
-  status            String   @default("PENDING") // PENDING, COMPLETED, FAILED
+model OnRampTransaction {
+  id        Int          @id @default(autoincrement())
+  status    OnRampStatus
+  token     String       @unique
+  provider  String
+  amount    Int
+  startTime DateTime
+  userId    Int
+  user      User         @relation(fields: [userId], references: [id])
+}
+
+model p2pTransfer {
+  id         Int          @id @default(autoincrement())
+  amount     Int
+  timestamp  DateTime
+  fromUserId Int
+  fromUser   User         @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
+  toUserId   Int
+  toUser     User         @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+}
+
+model Balance {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  amount Int
+  locked Int
+  user   User @relation(fields: [userId], references: [id])
+}
+
+enum OnRampStatus {
+  Success
+  Failure
+  Processing
 }
