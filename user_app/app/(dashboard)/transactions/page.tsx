@@ -1,3 +1,4 @@
+import Providers from "@/app/providers";
 import GetAllTransaction from "@/lib/actions/getTransactions";
 import { Search, ChevronDown } from 'lucide-react';
 
@@ -7,11 +8,11 @@ export default async function () {
 
     const getStatusClass = (status: string) => {
         switch (status) {
-            case 'COMPLETED':
+            case 'Success':
                 return 'bg-green-500';
-            case 'PENDING':
+            case 'Processing':
                 return 'bg-yellow-500';
-            case 'FAILED':
+            case 'Failure':
                 return 'bg-red-500';
             default:
                 return 'bg-gray-500';
@@ -19,9 +20,8 @@ export default async function () {
     };
 
     return (
-        <div className="w-screen bg-[#111111] text-white min-h-screen font-sans p-4 sm:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto">
-
+        <div className="w-screen bg-[#111111] text-white min-h-screen font-sans p-4 sm:p-6 lg:p-8 h-screen">
+            <div className="max-w-7xl mx-auto flex flex-col h-full">
                 {/* Header Section */}
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                     <div className="flex items-center gap-4">
@@ -50,9 +50,9 @@ export default async function () {
                 </header>
 
                 {/* Transaction Table */}
-                <div className="overflow-x-auto">
+                <div className="overflow-y-auto flex-grow">
                     <table className="w-full text-left text-sm">
-                        <thead className="text-xs text-gray-400 uppercase border-b border-gray-700">
+                        <thead className="text-xs text-gray-400 uppercase border-b border-gray-700 sticky top-0 bg-[#111111] z-10">
                             <tr>
                                 <th scope="col" className="px-6 py-3">Transaction</th>
                                 <th scope="col" className="px-6 py-3">Amount</th>
@@ -62,7 +62,7 @@ export default async function () {
                                 <th scope="col" className="px-6 py-3 text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody className="" >
                             {transactions.map((transaction) => (
                                 <tr key={transaction.id} className="border-b border-gray-800 hover:bg-gray-800/50">
                                     <td className="px-6 py-4">
@@ -80,7 +80,7 @@ export default async function () {
                                     <td className="px-6 py-4 font-semibold">₹{transaction.amount}</td>
                                     <td className="px-6 py-4">{transaction.transaction_type}</td>
                                     <td className="px-6 py-4">
-                                        {transaction.transaction_type === 'ONRAMP' ? transaction.provider : '-'}
+                                        {transaction.provider}
                                     </td>
                                     <td className="px-6 py-4">
                                         {new Date(transaction.timestamp).toLocaleDateString('en-IN', {

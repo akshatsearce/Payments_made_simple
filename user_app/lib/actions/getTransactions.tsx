@@ -1,10 +1,22 @@
 'use server'
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { NEXT_AUTH } from '@/lib/auth';
 
 export default async function GetAllTransaction() {
+  
+  const session = await getServerSession(NEXT_AUTH)
+  if(!session){
+    return {message: "Login Required"}
+  }
+  const id = Number(session.user.id)
+
   try {
     // Fetch OnRamp transactions
     const onRampTransactions = await prisma.onRampTransaction.findMany({
+      where:{
+        userId:id,
+      },
       select: {
         id: true,
         amount: true,
@@ -21,6 +33,12 @@ export default async function GetAllTransaction() {
 
     // Fetch P2P transfers
     const p2pTransfers = await prisma.p2pTransfer.findMany({
+      where:{
+        OR:[
+          {fromUserId : id},
+          {toUserId: id}
+        ]
+      },
       select: {
         id: true,
         amount: true,
@@ -56,6 +74,7 @@ export default async function GetAllTransaction() {
       amount: transfer.amount,
       transaction_type: 'P2P',
       status: 'Success', // P2P transfers don't have a status field in schema, assuming Success
+      provider:'Wallet' ,
       timestamp: transfer.timestamp,
       senderName: transfer.fromUser.name ?? 'Unknown',
       receiverName: transfer.toUser.name ?? 'Unknown',
