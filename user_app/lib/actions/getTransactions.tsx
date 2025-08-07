@@ -7,7 +7,7 @@ export default async function GetAllTransaction() {
   
   const session = await getServerSession(NEXT_AUTH)
   if(!session){
-    return {message: "Login Required"}
+    return []
   }
   const id = Number(session.user.id)
 
@@ -45,11 +45,13 @@ export default async function GetAllTransaction() {
         timestamp: true,
         fromUser: {
           select: {
+            id:true,
             name: true,
           },
         },
         toUser: {
           select: {
+            id:true,
             name: true,
           },
         },
@@ -65,7 +67,8 @@ export default async function GetAllTransaction() {
       provider: transaction.provider,
       timestamp: transaction.startTime,
       senderName: transaction.user.name ?? 'Unknown',
-      receiverName: 'System', // OnRamp transactions are from user to system
+      receiverName: 'System',
+      direction: true // OnRamp transactions are from user to system
     }));
 
     // Format P2P transfers
@@ -78,6 +81,7 @@ export default async function GetAllTransaction() {
       timestamp: transfer.timestamp,
       senderName: transfer.fromUser.name ?? 'Unknown',
       receiverName: transfer.toUser.name ?? 'Unknown',
+      direction: id === transfer.toUser.id
     }));
 
     // Combine both transaction types

@@ -77,7 +77,7 @@ export default async function () {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-semibold">₹{transaction.amount}</td>
+                                    <td className={`px-6 py-4 font-semibold ${transaction.direction ? 'text-green-500': 'text-red-500'}`}>₹{transaction.amount}</td>
                                     <td className="px-6 py-4">{transaction.transaction_type}</td>
                                     <td className="px-6 py-4">
                                         {transaction.provider}
