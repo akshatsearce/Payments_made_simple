@@ -16,6 +16,7 @@ import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import axios from "axios"
 import { SignUpAction } from "@/lib/actions/signUp"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 
 export default function SignUp() {
   const router = useRouter()
@@ -33,7 +34,8 @@ export default function SignUp() {
       const formdata = {
         number: formData.get('number')?.toString() || "",
         name: formData.get('name')?.toString() || "",
-        password: formData.get('password')?.toString() || ""
+        password: formData.get('password')?.toString() || "",
+        pin: formData.get('pin')?.toString() || ""
       }
 
       const response = await SignUpAction(formdata)
@@ -106,6 +108,19 @@ export default function SignUp() {
                     type="text"
                     required
                   />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="pin">Pin (6 digits)</Label>
+                  <InputOTP maxLength={6} id="pin" name="pin" type="text" inputMode="numeric" required>
+                      <InputOTPGroup>
+                          <InputOTPSlot index={0} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={1} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={2} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={3} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={4} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={5} className="w-14 h-14 text-2xl"/>
+                      </InputOTPGroup>
+                  </InputOTP>
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
               </div>

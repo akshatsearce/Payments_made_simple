@@ -2,8 +2,10 @@
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../auth";
 import { prisma } from '@/lib/prisma'
+import bcrypt from 'bcrypt'
+import { id } from "zod/v4/locales";
 
-export async function p2pTransfer(to: string, amount: number) {
+export async function p2pTransfer(to: string, amount: number , pin: string) {
     try {
 
         if (!to || amount <= 0) {
@@ -21,11 +23,30 @@ export async function p2pTransfer(to: string, amount: number) {
                 number: to
             },
             select: {
-                id: true
+                id: true,
+            }
+        })
+        const fromUser = await prisma.user.findUnique({
+            where:{
+                id: Number(from)
+            },
+            select:{
+                pin: true
             }
         })
 
-        if (toUser?.id == from) {
+
+        if (!fromUser || !toUser) {
+            return { message: "Invalid recipient" };
+        }
+
+        const isPinValid = await bcrypt.compare(pin, fromUser.pin);
+
+        if (!isPinValid) {
+            return { message: "Invalid Pin" };
+        }
+
+        if (toUser.id == from) {
             return { message: "Cannot transfer to yourself!" }
         }
 

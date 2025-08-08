@@ -7,12 +7,14 @@ import { error } from "console";
 const UserSchema = z.object({
   number: z.string().regex(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
-  name: z.string().min(1, 'Full Name is required')
+  name: z.string().min(1, 'Full Name is required'),
+  pin: z.string().min(6 , '6 digits required').max(6)
 })
 
 interface SignUpProp {
     number: string,
     password: string,
+    pin: string,
     name: string
 }
 
@@ -26,7 +28,7 @@ export async function SignUpAction(req: SignUpProp){
                 error: result.error.flatten().fieldErrors
             }
         }
-        const {number, password, name} = result.data
+        const {number, password, name , pin} = result.data
 
         const existingUser = await prisma.user.findUnique({
             where: {number}
@@ -40,13 +42,15 @@ export async function SignUpAction(req: SignUpProp){
         }
 
         const hashedPassword = await bcrypt.hash(password,10)
+        const hashedPin = await bcrypt.hash(pin,10)
 
         const newUser = await prisma.$transaction(async(tx)=>{
             const user = await tx.user.create({
                 data:{
                     number,
                     name,
-                    password: hashedPassword
+                    password: hashedPassword,
+                    pin: hashedPin
                 }
             })
             const randomBalance = Math.random()* 100000
