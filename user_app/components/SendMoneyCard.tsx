@@ -8,6 +8,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -19,6 +20,7 @@ import { ArrowDown, ArrowRight, Move, MoveUpRight } from "lucide-react"
 import { useState } from "react"
 import { p2pTransfer } from "@/lib/actions/p2pTransfer"
 import PinDrawer from "./utilUi/pinDrawer"
+import VerifiableBadge from "./utilUi/varificationStatus"
 
 export default function SendMoney() {
   // In a real app, these would be managed with React state (e.g., useState)
@@ -96,6 +98,7 @@ export default function SendMoney() {
               onChange={(e) => { setPhoneNumber(e.target.value) }}
               className="flex-1 border-0 bg-transparent text-2xl font-bold text-white placeholder:text-slate-500 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
+            <VerifiableBadge number={phoneNumber}/>
           </div>
         </div>
 
