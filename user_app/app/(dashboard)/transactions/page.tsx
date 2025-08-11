@@ -1,18 +1,21 @@
-import Providers from "@/app/providers";
+import { RequestActionButton } from "@/components/utilUi/requestActionButton";
 import GetAllTransaction from "@/lib/actions/getTransactions";
+import { NEXT_AUTH } from "@/lib/auth";
 import { Search, ChevronDown, MoveUpRight, MoveDownLeft } from 'lucide-react';
+import { getServerSession } from "next-auth";
 
 export default async function () {
 
     const transactions = await GetAllTransaction()
+    const session = await getServerSession(NEXT_AUTH)
 
     const getStatusClass = (status: string) => {
         switch (status) {
-            case 'Success':
+            case 'SUCCESS':
                 return 'bg-green-500';
-            case 'Processing':
+            case 'PROCESSING':
                 return 'bg-yellow-500';
-            case 'Failure':
+            case 'FAILURE':
                 return 'bg-red-500';
             default:
                 return 'bg-gray-500';
@@ -93,12 +96,18 @@ export default async function () {
                                             year: 'numeric',
                                             hour: '2-digit',
                                             minute: '2-digit',
+                                            second: '2-digit'
                                         })}
                                     </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end">
+                                        <div className="flex items-center justify-end gap-4">
+                                            <div className="flex items-center">
                                             <div className={`h-2.5 w-2.5 rounded-full mr-2 ${getStatusClass(transaction.status)}`}></div>
                                             {transaction.status}
+                                            </div>
+                                            {transaction.status === 'PROCESSING' && transaction.senderId == session?.user?.id && (
+                                            <RequestActionButton transactionId={transaction.id} amount={transaction.amount} toUserName={transaction.receiverName}/>
+                                            )}
                                         </div>
                                     </td>
                                 </tr>

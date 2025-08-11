@@ -34,7 +34,7 @@ model Merchant {
 
 model OnRampTransaction {
   id        Int          @id @default(autoincrement())
-  status    OnRampStatus
+  status    TransactionStatus 
   token     String       @unique
   provider  String
   amount    Int
@@ -45,6 +45,7 @@ model OnRampTransaction {
 
 model p2pTransfer {
   id         Int          @id @default(autoincrement())
+  status     TransactionStatus 
   amount     Int
   timestamp  DateTime
   fromUserId Int
@@ -61,8 +62,8 @@ model Balance {
   user   User @relation(fields: [userId], references: [id])
 }
 
-enum OnRampStatus {
-  Success
-  Failure
-  Processing
+enum TransactionStatus {
+  SUCCESS
+  FAILURE
+  PROCESSING
 }

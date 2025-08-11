@@ -5,10 +5,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import {
   Select,
   SelectContent,
@@ -16,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { ArrowDown, ArrowRight, Move, MoveUpRight } from "lucide-react"
+import { ArrowDown, MoveUpRight } from "lucide-react"
 import { useState } from "react"
 import { p2pTransfer } from "@/lib/actions/p2pTransfer"
 import PinDrawer from "./utilUi/pinDrawer"
@@ -109,7 +107,7 @@ export default function SendMoney() {
         {success && (
           <div className="text-green-400 text-sm">{success}</div>
         )}
-        <PinDrawer pin={pin} onClick={handelSubmit} setPin={setPin} buttonHeader="Send Money" disabled={isloading} logo={<MoveUpRight className="h-6 w-6 text-white" />} />
+        <PinDrawer pin={pin} onClick={handelSubmit} setPin={setPin} buttonHeader="Send Money" disabled={isloading} logo={<MoveUpRight className="h-6 w-6 text-white"/>} />
       </CardContent>
     </Card>
   )

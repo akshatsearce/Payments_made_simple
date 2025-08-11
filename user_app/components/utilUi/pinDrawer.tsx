@@ -1,8 +1,6 @@
 import { Drawer , DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { Button } from "../ui/button";
-import { Input } from "../ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "../ui/input-otp";
-import { MoveUpRight } from "lucide-react";
 
  
 interface PinDrawerProps {
@@ -11,7 +9,7 @@ interface PinDrawerProps {
     buttonHeader: string,
     logo: React.ReactNode,
     onClick : ()=>{},
-    disabled:boolean
+    disabled : boolean
 }
 
 export default function PinDrawer({pin, setPin , buttonHeader , logo , onClick, disabled}:PinDrawerProps){
@@ -48,7 +46,7 @@ export default function PinDrawer({pin, setPin , buttonHeader , logo , onClick, 
                     </div>
                     <DrawerFooter>
                         <DrawerClose asChild>
-                            <Button className="bg-lime-400 text-black font-bold hover:bg-indigo-600" onClick={onClick}>Submit</Button>
+                            <Button className="bg-lime-300 text-black font-bold hover:bg-indigo-600" onClick={onClick}>Submit</Button>
                             {/* <Button variant="secondary" className="hover:bg-zinc-900">Cancel</Button> */}
                         </DrawerClose>
                     </DrawerFooter>

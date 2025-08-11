@@ -26,6 +26,7 @@ export default async function GetAllTransaction() {
         user: {
           select: {
             name: true,
+            id: true,
           },
         },
       },
@@ -42,6 +43,7 @@ export default async function GetAllTransaction() {
       select: {
         id: true,
         amount: true,
+        status: true,
         timestamp: true,
         fromUser: {
           select: {
@@ -67,8 +69,9 @@ export default async function GetAllTransaction() {
       provider: transaction.provider,
       timestamp: transaction.startTime,
       senderName: transaction.user.name ?? 'Unknown',
+      senderId: transaction.user.id,
       receiverName: 'System',
-      direction: true // OnRamp transactions are from user to system
+      direction: true
     }));
 
     // Format P2P transfers
@@ -76,10 +79,11 @@ export default async function GetAllTransaction() {
       id: transfer.id,
       amount: transfer.amount,
       transaction_type: 'P2P',
-      status: 'Success', // P2P transfers don't have a status field in schema, assuming Success
+      status: transfer.status,
       provider:'Wallet' ,
       timestamp: transfer.timestamp,
       senderName: transfer.fromUser.name ?? 'Unknown',
+      senderId: transfer.fromUser.id ,
       receiverName: transfer.toUser.name ?? 'Unknown',
       direction: id === transfer.toUser.id
     }));

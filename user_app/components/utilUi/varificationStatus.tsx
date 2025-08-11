@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge"
-import { Loader2, CheckCircle, XCircle, ShieldQuestion, SearchCheck } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, SearchCheck } from "lucide-react";
 import VarifyUserAction from "@/lib/actions/varifyUser";
 
 type VerificationStatus = "idle" | "loading" | "success" | "error";
@@ -29,6 +29,7 @@ export default function VerifiableBadge({ number }: VarifyUserActionProp) {
             setName(response.msg)
 
         } else {
+            setName(null)
             setStatus("error")
         }
     };
