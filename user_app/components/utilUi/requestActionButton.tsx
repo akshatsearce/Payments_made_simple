@@ -5,6 +5,7 @@ import { Button } from "../ui/button";
 import PinDrawer from "./pinDrawer";
 import { MoveUpRight } from "lucide-react";
 import { p2pRequestTransfer } from "@/lib/actions/p2pTransfer";
+import { toast } from "sonner";
 
 interface RequestActionButtonProps {
     transactionId: number,
@@ -22,15 +23,31 @@ export function RequestActionButton({ transactionId, toUserName, amount }: Reque
         try {
             const result = await p2pRequestTransfer(transactionId, pin);
             if (result?.status === 200) {
-                alert("Transaction successful!");
+                toast("Transaction successful!",{
+                    action:{
+                        label: "ok",
+                        onClick: ()=>{window.location.reload()}
+                    }
+                });
                 setAlertOpen(false);
                 setPin("");
             } else {
-                alert(result?.message || "Transaction failed.");
+                toast(result?.message || "Transaction failed.", {
+                    action:{
+                        label: "ok",
+                        onClick: ()=>{window.location.reload()}
+                    }
+                });
             }
         } catch (e) {
-            alert("Something went wrong. Please try again.");
+            toast("Something went wrong. Please try again.",{
+                    action:{
+                        label: "ok",
+                        onClick: ()=>{window.location.reload()}
+                    }
+                });
         } finally {
+            // window.location.reload();
             setAlertOpen(false)
             setIsloading(false);
         }
@@ -46,7 +63,7 @@ export function RequestActionButton({ transactionId, toUserName, amount }: Reque
                     <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure you want to send <span className="text-lime-300">₹{amount}</span>  to {toUserName} </AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete your account and remove your data from our servers.
+                            This action cannot be undone. This will transfer the money to the requestor.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="flex flex-col">
