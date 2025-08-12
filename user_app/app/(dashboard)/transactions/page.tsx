@@ -67,7 +67,7 @@ export default async function () {
                         </thead>
                         <tbody className="" >
                             {transactions.map((transaction) => (
-                                <tr key={transaction.id} className="border-b border-gray-800 hover:bg-gray-800/50">
+                                <tr key={`${transaction.transaction_type}-${transaction.id}`} className="border-b border-gray-800 hover:bg-gray-800/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
                                             <div className="flex items-center gap-2">
@@ -105,7 +105,7 @@ export default async function () {
                                             <div className={`h-2.5 w-2.5 rounded-full mr-2 ${getStatusClass(transaction.status)}`}></div>
                                             {transaction.status}
                                             </div>
-                                            {transaction.status === 'PROCESSING' && transaction.senderId == session?.user?.id && (
+                                            {transaction.status === 'PROCESSING' && (transaction.transaction_type=== 'P2P') && (transaction.senderId == session?.user?.id) && (
                                             <RequestActionButton transactionId={transaction.id} amount={transaction.amount} toUserName={transaction.receiverName}/>
                                             )}
                                         </div>

@@ -20,7 +20,7 @@ export default function Layout({
         <>
         <NavItem icon={<Wallet size={20} />} href="/dashboard">Portfolio</NavItem>
         <NavItem icon={<Receipt size={20}  />} href="/transactions" >Transactions</NavItem>
-        <NavItem icon={<Bell size={20} />} notificationCount={4} href="/transfer" >Notifications</NavItem>
+        {/* <NavItem icon={<Bell size={20} />} notificationCount={4} href="/transfer" >Notifications</NavItem> */}
         <NavItem icon={<ArrowRightLeft size={20} />} href="/transfer" >Transfer</NavItem>
 
         </>

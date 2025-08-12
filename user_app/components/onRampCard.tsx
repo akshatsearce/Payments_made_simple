@@ -15,27 +15,37 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { MoveDownLeft } from "lucide-react"
+import { Loader2, MoveDownLeft } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
+import { CreateOnRampTransaction } from "@/lib/actions/onRampRequest"
+import { toast } from "sonner"
 
 
 
 
 export default function OnRamp() {
-    // In a real app, these would be managed with React state (e.g., useState)
     const [amount, setAmount] = useState(0)
     const [bank, setBank] = useState<string | null>(null)
-    const router = useRouter()
+    const [isloading, setIsLoading] = useState(false)
 
-    const bankUrls: Record<string, string> = {
-        Axis: "https://www.axisbank.com/",
-        HDFC: "https://netbanking.hdfcbank.com",
-    }
 
-    const handleAddMoney = () => {
-        if (bank && bankUrls[bank]){
-            router.push(bankUrls[bank])
+    const handleAddMoney = async () => {
+        try{
+            if(!bank){
+                throw new Error('Invalid bank selected')
+            }
+            setIsLoading(true)
+            const response = await CreateOnRampTransaction(bank, amount)
+            if(response.status!= 200){
+                throw new Error(`${response.message}`)
+            }
+            toast('Money will soon be credited to your wallet.')
+
+        }catch(e){
+            toast(`Something went wrong. ${e}`)
+        }finally{
+            setIsLoading(false)
         }
     }
 
@@ -91,11 +101,15 @@ export default function OnRamp() {
                 <Button size="lg"
                     className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-indigo-600"
                     onClick={handleAddMoney}
-                    disabled={!bank}
+                    disabled={isloading || amount <= 0 || !bank}
                 >
                     Add Money
                     <div className="ml-2 flex items-center justify-center h-8 w-8 rounded-full bg-black">
-                        <MoveDownLeft className="h-6 w-6 text-white" />
+                        {isloading ? (
+                            <Loader2 className="h-6 w-6 animate-spin text-white" />
+                        ) : (
+                            <MoveDownLeft className="h-6 w-6 text-white" />
+                        )}
                     </div>
                 </Button>
             </CardContent>
