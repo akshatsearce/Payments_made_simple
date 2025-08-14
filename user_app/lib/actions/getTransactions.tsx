@@ -4,9 +4,8 @@ import { getServerSession } from 'next-auth';
 import { NEXT_AUTH } from '@/lib/auth';
 
 export default async function GetAllTransaction() {
-  
   const session = await getServerSession(NEXT_AUTH)
-  if(!session){
+  if (!session) {
     return []
   }
   const id = Number(session.user.id)
@@ -14,8 +13,8 @@ export default async function GetAllTransaction() {
   try {
     // Fetch OnRamp transactions
     const onRampTransactions = await prisma.onRampTransaction.findMany({
-      where:{
-        userId:id,
+      where: {
+        userId: id,
       },
       select: {
         id: true,
@@ -34,10 +33,10 @@ export default async function GetAllTransaction() {
 
     // Fetch P2P transfers
     const p2pTransfers = await prisma.p2pTransfer.findMany({
-      where:{
-        OR:[
-          {fromUserId : id},
-          {toUserId: id}
+      where: {
+        OR: [
+          { fromUserId: id },
+          { toUserId: id }
         ]
       },
       select: {
@@ -47,14 +46,34 @@ export default async function GetAllTransaction() {
         timestamp: true,
         fromUser: {
           select: {
-            id:true,
+            id: true,
             name: true,
           },
         },
         toUser: {
           select: {
-            id:true,
+            id: true,
             name: true,
+          },
+        },
+      },
+    });
+
+    // Fetch OffRamp transactions
+    const offRampTransactions = await prisma.offRampTransaction.findMany({
+      where: {
+        userId: id,
+      },
+      select: {
+        id: true,
+        amount: true,
+        status: true,
+        provider: true,
+        timestamp: true,
+        user: {
+          select: {
+            name: true,
+            id: true,
           },
         },
       },
@@ -80,16 +99,34 @@ export default async function GetAllTransaction() {
       amount: transfer.amount,
       transaction_type: 'P2P',
       status: transfer.status,
-      provider:'Wallet' ,
+      provider: 'Wallet',
       timestamp: transfer.timestamp,
       senderName: transfer.fromUser.name ?? 'Unknown',
-      senderId: transfer.fromUser.id ,
+      senderId: transfer.fromUser.id,
       receiverName: transfer.toUser.name ?? 'Unknown',
       direction: id === transfer.toUser.id
     }));
 
-    // Combine both transaction types
-    const allTransactions = [...formattedOnRampTransactions, ...formattedP2PTransfers];
+    // Format OffRamp transactions
+    const formattedOffRampTransactions = offRampTransactions.map((transaction) => ({
+      id: transaction.id,
+      amount: transaction.amount,
+      transaction_type: 'OFFRAMP',
+      status: transaction.status,
+      provider: transaction.provider,
+      timestamp: transaction.timestamp,
+      senderName: transaction.user.name ?? 'Unknown',
+      senderId: transaction.user.id,
+      receiverName: 'System',
+      direction: false
+    }));
+
+    // Combine all transaction types
+    const allTransactions = [
+      ...formattedOnRampTransactions,
+      ...formattedP2PTransfers,
+      ...formattedOffRampTransactions
+    ];
 
     // Sort transactions by timestamp (most recent first)
     return allTransactions.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());

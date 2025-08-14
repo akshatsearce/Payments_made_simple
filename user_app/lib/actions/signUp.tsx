@@ -57,7 +57,7 @@ export async function SignUpAction(req: SignUpProp){
 
             await tx.balance.create({
                 data: {
-                    userId: user.id,
+                    userId: Number(user.id),
                     amount: randomBalance,
                     locked: 0
                 }

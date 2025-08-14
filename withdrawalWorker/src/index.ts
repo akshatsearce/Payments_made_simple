@@ -27,7 +27,7 @@ async function startWorker() {
 
         // check if the user has that much balance
         const balance = await prisma.balance.findUnique({
-          where: { userId: transaction.userId },
+          where: { userId: Number(transaction.userId) },
           select: { amount: true }
         })
 
