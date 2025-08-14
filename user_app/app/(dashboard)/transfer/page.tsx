@@ -1,3 +1,4 @@
+import { OffRampingCard } from "@/components/offRampingCard";
 import OnRamp from "@/components/onRampCard";
 import RequestMoney from "@/components/requestMoneyCard";
 import SendMoney from "@/components/sendMoneyCard";
@@ -10,6 +11,7 @@ export default function(){
         </div>
         <div className="flex justify-center"> 
             <OnRamp/>
+            <OffRampingCard/>
         </div>
         
     </div>
