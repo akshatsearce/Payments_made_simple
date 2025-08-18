@@ -15,6 +15,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import axios from "axios"
+import { SignUpAction } from "@/lib/actions/signUp"
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
 
 export default function SignUp() {
   const router = useRouter()
@@ -27,27 +29,38 @@ export default function SignUp() {
     setIsLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const phone_number = formData.get("phone_number")?.toString()
-    const password = formData.get("password")?.toString()
-    const fullname = formData.get("fullname")?.toString()
 
     try {
-      const response = await axios.post("/api/signup", {
-        phone_number,
-        password,
-        fullname,
-      })
+      const formdata = {
+        number: formData.get('number')?.toString() || "",
+        name: formData.get('name')?.toString() || "",
+        password: formData.get('password')?.toString() || "",
+        pin: formData.get('pin')?.toString() || ""
+      }
 
-      // Redirect to signin page after successful signup
-      router.push("/signin")
-    } catch (err: any) {
-      const errorMsg =
-        err.response?.data?.errors?.phone_number ||
-        err.response?.data?.errors?.server ||
-        "Signup failed"
-      setError(errorMsg)
+      const response = await SignUpAction(formdata)
+
+      if (response.status === 201) {
+        setIsLoading(false)
+        router.push("/signin")
+      } else {
+        // Convert error to string
+        const errorMsg = typeof response.error === 'object' && response.error
+          ? Object.values(response.error)
+            .flat()
+            .filter((err): err is string => err !== undefined)
+            .join(', ') || "Signup failed"
+          : response.error || "Signup failed"
+
+        setError(errorMsg)
+        setIsLoading(false)
+      }
+    } catch (err) {
+      console.error('Signup error:', err)
+      setError("Something went wrong")
       setIsLoading(false)
     }
+
   }
 
   return (
@@ -69,10 +82,10 @@ export default function SignUp() {
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="phone_number">Phone Number</Label>
+                  <Label htmlFor="number">Phone Number</Label>
                   <Input
-                    id="phone_number"
-                    name="phone_number"
+                    id="number"
+                    name="number"
                     type="number"
                     placeholder="+1234567890"
                     required
@@ -88,13 +101,26 @@ export default function SignUp() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="fullname">Full Name</Label>
+                  <Label htmlFor="name">Full Name</Label>
                   <Input
-                    id="fullname"
-                    name="fullname"
+                    id="name"
+                    name="name"
                     type="text"
                     required
                   />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="pin">Pin (6 digits)</Label>
+                  <InputOTP maxLength={6} id="pin" name="pin" type="text" inputMode="numeric" required>
+                      <InputOTPGroup>
+                          <InputOTPSlot index={0} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={1} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={2} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={3} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={4} className="w-14 h-14 text-2xl"/>
+                          <InputOTPSlot index={5} className="w-14 h-14 text-2xl"/>
+                      </InputOTPGroup>
+                  </InputOTP>
                 </div>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
               </div>

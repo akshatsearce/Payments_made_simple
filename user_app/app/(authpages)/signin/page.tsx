@@ -27,13 +27,13 @@ export default function SignIn() {
     setIsLoading(true)
 
     const formData = new FormData(e.currentTarget)
-    const phone_number = formData.get("phone_number")?.toString()
+    const number = formData.get("number")?.toString()
     const password = formData.get("password")?.toString()
 
     try {
       const result = await signIn("credentials", {
         redirect: false,
-        phone_number,
+        number,
         password,
       })
 
@@ -43,7 +43,7 @@ export default function SignIn() {
         return
       }
 
-      router.push("/")
+      router.push("/dashboard")
     } catch (err) {
       setError("An error occurred during login")
       setIsLoading(false)
@@ -69,10 +69,10 @@ export default function SignIn() {
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-6">
                 <div className="grid gap-2">
-                  <Label htmlFor="phone_number">Phone Number</Label>
+                  <Label htmlFor="number">Phone Number</Label>
                   <Input
-                    id="phone_number"
-                    name="phone_number"
+                    id="number"
+                    name="number"
                     type="number"
                     placeholder="+1234567890"
                     required

@@ -5,7 +5,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -15,28 +14,29 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
-import { Loader2, MoveDownLeft } from "lucide-react"
+import { MoveUpRight } from "lucide-react"
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { CreateOnRampTransaction } from "@/lib/actions/onRampRequest"
+
+
 import { toast } from "sonner"
+import { offRamping } from "@/lib/actions/offRamping"
+import PinDrawer from "./utilUi/pinDrawer"
 
 
-
-
-export default function OnRamp() {
+export default function OffRampingCard() {
     const [amount, setAmount] = useState(0)
-    const [bank, setBank] = useState<string | null>(null)
+    const [bank, setBank] = useState<string>("")
     const [isloading, setIsLoading] = useState(false)
+    const [pin , setPin] = useState("")
 
 
-    const handleAddMoney = async () => {
+    const handleWithdrawMoney = async () => {
         try{
             if(!bank){
                 throw new Error('Invalid bank selected')
             }
             setIsLoading(true)
-            const response = await CreateOnRampTransaction(bank, amount)
+            const response = await offRamping(amount, pin , bank)
             if(response.status!= 200){
                 throw new Error(`${response.message}`)
             }
@@ -53,7 +53,7 @@ export default function OnRamp() {
         <Card className="w-full max-w-md bg-[#111111] border-slate-800 text-slate-50">
             <CardHeader>
                 <CardTitle className="text-2xl font-bold text-center">
-                    Add Money to <span className="text-lime-300">Wallet</span>
+                    Withdraw Money from <span className="text-lime-300">Wallet</span>
                 </CardTitle>
             </CardHeader>
             <CardContent className="grid gap-6">
@@ -98,20 +98,7 @@ export default function OnRamp() {
                 </div>
 
                 {/* Send Money Button */}
-                <Button size="lg"
-                    className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-indigo-600"
-                    onClick={handleAddMoney}
-                    disabled={isloading || amount <= 0 || !bank}
-                >
-                    Add Money
-                    <div className="ml-2 flex items-center justify-center h-8 w-8 rounded-full bg-black">
-                        {isloading ? (
-                            <Loader2 className="h-6 w-6 animate-spin text-white" />
-                        ) : (
-                            <MoveDownLeft className="h-6 w-6 text-white" />
-                        )}
-                    </div>
-                </Button>
+                <PinDrawer pin={pin} setPin={setPin} buttonHeader="Withdraw Money" onClick={handleWithdrawMoney} logo={<MoveUpRight className="h-6 w-6 text-white"/>} disabled={isloading} />
             </CardContent>
         </Card>
     )

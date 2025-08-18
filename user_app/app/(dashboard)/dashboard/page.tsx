@@ -6,13 +6,13 @@ import { getServerSession } from "next-auth";
 async function GetBalance() {
 
     const session = await getServerSession(NEXT_AUTH)
-    const account = await prisma.account.findFirst({
+    const balance = await prisma.balance.findFirst({
         where:{
-            user_id: Number(session?.user?.id)
+            userId: Number(session?.user?.id)
         }
     })
     return {
-        balance: account?.balance || 0
+        balance: balance?.amount || 0
     }
     
 }

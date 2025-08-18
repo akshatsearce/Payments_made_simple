@@ -1,17 +1,21 @@
+import { RequestActionButton } from "@/components/utilUi/requestActionButton";
 import GetAllTransaction from "@/lib/actions/getTransactions";
-import { Search ,ChevronDown} from 'lucide-react';
+import { NEXT_AUTH } from "@/lib/auth";
+import { Search, ChevronDown, MoveUpRight, MoveDownLeft } from 'lucide-react';
+import { getServerSession } from "next-auth";
 
 export default async function () {
 
     const transactions = await GetAllTransaction()
+    const session = await getServerSession(NEXT_AUTH)
 
     const getStatusClass = (status: string) => {
         switch (status) {
-            case 'COMPLETED':
+            case 'SUCCESS':
                 return 'bg-green-500';
-            case 'PENDING':
+            case 'PROCESSING':
                 return 'bg-yellow-500';
-            case 'FAILED':
+            case 'FAILURE':
                 return 'bg-red-500';
             default:
                 return 'bg-gray-500';
@@ -19,9 +23,8 @@ export default async function () {
     };
 
     return (
-        <div className="w-screen bg-[#111111] text-white min-h-screen font-sans p-4 sm:p-6 lg:p-8">
-            <div className="max-w-7xl mx-auto">
-
+        <div className="w-screen bg-[#111111] text-white min-h-screen font-sans p-4 sm:p-6 lg:p-8 h-screen">
+            <div className="max-w-7xl mx-auto flex flex-col h-full">
                 {/* Header Section */}
                 <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
                     <div className="flex items-center gap-4">
@@ -50,35 +53,63 @@ export default async function () {
                 </header>
 
                 {/* Transaction Table */}
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead className="text-xs text-gray-400 uppercase border-b border-gray-700">
+                <div className="overflow-y-auto flex-grow">
+                    <table className="w-full text-left text-sm">
+                        <thead className="text-xs text-gray-400 uppercase border-b border-gray-700 sticky top-0 bg-[#111111] z-10">
                             <tr>
                                 <th scope="col" className="px-6 py-3">Transaction</th>
-                                <th scope="col" className="px-6 py-3">Total Value</th>
-                                {/* <th scope="col" className="px-6 py-3 text-right">Amount</th> */}
+                                <th scope="col" className="px-6 py-3">Amount</th>
+                                <th scope="col" className="px-6 py-3">Type</th>
+                                <th scope="col" className="px-6 py-3">Provider</th>
+                                <th scope="col" className="px-6 py-3">Date</th>
                                 <th scope="col" className="px-6 py-3 text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {transactions.map((transaction, index) => (
-                                <tr key={index} className="border-b border-gray-800 hover:bg-gray-800/50">
+                        <tbody className="" >
+                            {transactions.map((transaction) => (
+                                <tr key={`${transaction.transaction_type}-${transaction.id}`} className="border-b border-gray-800 hover:bg-gray-800/50">
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <div>
-                                                <div className="font-semibold">{transaction.receiverName}</div>
-                                                <div className="text-sm text-gray-400">{transaction.transaction_type}</div>
+                                            <div className="flex items-center gap-2">
+                                                {transaction.direction ? (
+                                                        <MoveDownLeft className="text-green-500" />
+                                                    ) : (
+                                                        <MoveUpRight className="text-red-500" />
+                                                    )}
+                                                <div className="font-semibold">
+                                                    {transaction.transaction_type === 'P2P'
+                                                        ? (transaction.direction ? transaction.senderName : transaction.receiverName)
+                                                        : transaction.senderName}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-6 py-4 font-semibold">₹{transaction.amount}</td>
+                                    <td className={`px-6 py-4 font-semibold ${transaction.direction ? 'text-green-500' : 'text-red-500'}`}>₹{transaction.amount}</td>
+                                    <td className="px-6 py-4">{transaction.transaction_type}</td>
+                                    <td className="px-6 py-4">
+                                        {transaction.provider}
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        {new Date(transaction.timestamp).toLocaleDateString('en-IN', {
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit'
+                                        })}
+                                    </td>
                                     <td className="px-6 py-4 text-right">
-                                        <div className="flex items-center justify-end">
+                                        <div className="flex items-center justify-end gap-4">
+                                            <div className="flex items-center">
                                             <div className={`h-2.5 w-2.5 rounded-full mr-2 ${getStatusClass(transaction.status)}`}></div>
                                             {transaction.status}
+                                            </div>
+                                            {transaction.status === 'PROCESSING' && (transaction.transaction_type=== 'P2P') && (transaction.senderId == session?.user?.id) && (
+                                            <RequestActionButton transactionId={transaction.id} amount={transaction.amount} toUserName={transaction.receiverName}/>
+                                            )}
                                         </div>
                                     </td>
-
                                 </tr>
                             ))}
                         </tbody>
