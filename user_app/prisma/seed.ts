@@ -4,12 +4,13 @@ const prisma = new PrismaClient()
 
 async function main() {
   const user = await prisma.user.upsert({
-    where: { phone_number: "912765217" },
+    where: { number: "912765217" },
     update: {},
     create: {
-        phone_number: "912765217" ,
-        fullname: 'Test User',
-	    password: `$2y$12$GBfcgD6XwaMferSOdYGiduw3Awuo95QAPhxFE0oNJ.Ds8qj3pzEZy` //password
+        number: "912765217" ,
+        name: 'Test User',
+        pin: '123456',
+        password: `$2y$12$GBfcgD6XwaMferSOdYGiduw3Awuo95QAPhxFE0oNJ.Ds8qj3pzEZy`
     },
   })
   console.log({ user })
