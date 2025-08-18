@@ -1,4 +1,3 @@
-import DataTableDemo from "@/components/datatable";
 import NavBar from "@/components/navBar";
 import { NEXT_AUTH } from "@/lib/auth";
 import { getServerSession } from 'next-auth';
