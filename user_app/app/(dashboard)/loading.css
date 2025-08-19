@@ -1,0 +1,33 @@
+/* app/loading.css */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.loading-spinner {
+  font-size: 4rem;
+  animation: spin-animation 1.5s linear infinite;
+}
+
+.loading-text {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  color: #555;
+  font-weight: 500;
+}
+
+@keyframes spin-animation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
