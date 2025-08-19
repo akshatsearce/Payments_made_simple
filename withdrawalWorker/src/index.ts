@@ -3,11 +3,12 @@ import { prisma } from '../lib/prisma'
 import { v4 as uuidv4 } from 'uuid';
 
 async function startWorker() {
+
   const client: RedisClientType = createClient({
     url: process.env.REDIS_URL,
   });
 
-  client.on('error', (err) => console.error('Redis Client Error', err));
+  client.on('error', (err) => console.log('Redis Client Error', err));
 
   await client.connect();
 
