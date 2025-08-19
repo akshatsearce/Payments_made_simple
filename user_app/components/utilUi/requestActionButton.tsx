@@ -6,6 +6,7 @@ import PinDrawer from "./pinDrawer";
 import { MoveUpRight } from "lucide-react";
 import { p2pRequestTransfer } from "@/lib/actions/p2pTransfer";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface RequestActionButtonProps {
     transactionId: number,
@@ -17,6 +18,7 @@ export function RequestActionButton({ transactionId, toUserName, amount }: Reque
     const [pin, setPin] = useState("");
     const [isloading, setIsloading] = useState<boolean>(false);
     const [alertOpen, setAlertOpen] = useState(false);
+    const router = useRouter();
 
     const handleSubmit = async () => {
         setIsloading(true);
@@ -26,7 +28,7 @@ export function RequestActionButton({ transactionId, toUserName, amount }: Reque
                 toast("Transaction successful!",{
                     action:{
                         label: "ok",
-                        onClick: ()=>{window.location.reload()}
+                        onClick: ()=>{router.refresh()}
                     }
                 });
                 setAlertOpen(false);
@@ -35,7 +37,7 @@ export function RequestActionButton({ transactionId, toUserName, amount }: Reque
                 toast(result?.message || "Transaction failed.", {
                     action:{
                         label: "ok",
-                        onClick: ()=>{window.location.reload()}
+                        onClick: ()=>{router.refresh()}
                     }
                 });
             }
@@ -43,11 +45,10 @@ export function RequestActionButton({ transactionId, toUserName, amount }: Reque
             toast("Something went wrong. Please try again.",{
                     action:{
                         label: "ok",
-                        onClick: ()=>{window.location.reload()}
+                        onClick: ()=>{router.refresh()}
                     }
                 });
         } finally {
-            // window.location.reload();
             setAlertOpen(false)
             setIsloading(false);
         }
