@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../auth";
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcrypt'
+import { createNotification } from "./notificationAction";
 
 export async function p2pTransfer(to: string, amount: number , pin: string) {
     try {
@@ -92,7 +93,15 @@ export async function p2pTransfer(to: string, amount: number , pin: string) {
             })
 
         })
-        return { 
+        
+        await createNotification({
+            userId: toUser?.id,
+            message: `You have received ${amount} from ${from}`,
+            type: "TRANSFER",
+            relatedId: ""
+        });
+
+        return {
             status: 200,
             message: "Transfer Successfull"
         }

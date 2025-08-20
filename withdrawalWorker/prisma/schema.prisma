@@ -14,56 +14,57 @@ datasource db {
 }
 
 model User {
-  id                Int                 @id @default(autoincrement())
-  email             String?             @unique
-  name              String?
-  number            String              @unique
-  password          String
-  pin               String             
-  OnRampTransaction OnRampTransaction[]
-  Balance           Balance[]
-  sentTransfers     p2pTransfer[]       @relation(name: "FromUserRelation")
-  receivedTransfers p2pTransfer[]       @relation(name: "ToUserRelation")
+  id                 Int                  @id @default(autoincrement())
+  email              String?              @unique
+  name               String?
+  number             String               @unique
+  password           String
+  pin                String
+  OnRampTransaction  OnRampTransaction[]
+  Balance            Balance[]
+  sentTransfers      p2pTransfer[]        @relation(name: "FromUserRelation")
+  receivedTransfers  p2pTransfer[]        @relation(name: "ToUserRelation")
   OffRampTransaction OffRampTransaction[]
+  Notification       Notification[]
 }
 
 model Merchant {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?
+  id    Int     @id @default(autoincrement())
+  email String  @unique
+  name  String?
 }
 
 model OnRampTransaction {
-  id        Int          @id @default(autoincrement())
-  status    TransactionStatus 
-  token     String       @unique
+  id        Int               @id @default(autoincrement())
+  status    TransactionStatus
+  token     String            @unique
   provider  String
   amount    Int
   startTime DateTime
   userId    Int
-  user      User         @relation(fields: [userId], references: [id])
+  user      User              @relation(fields: [userId], references: [id])
 }
 
 model p2pTransfer {
-  id         Int          @id @default(autoincrement())
-  status     TransactionStatus 
+  id         Int               @id @default(autoincrement())
+  status     TransactionStatus
   amount     Int
   timestamp  DateTime
   fromUserId Int
-  fromUser   User         @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
+  fromUser   User              @relation(name: "FromUserRelation", fields: [fromUserId], references: [id])
   toUserId   Int
-  toUser     User         @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
+  toUser     User              @relation(name: "ToUserRelation", fields: [toUserId], references: [id])
 }
 
 model OffRampTransaction {
-  id         Int        @id @default(autoincrement())
-  status     TransactionStatus
-  token      String     @unique
-  provider   String
-  amount     Int
-  timestamp  DateTime
-  userId     Int
-  user       User         @relation(fields: [userId], references: [id])
+  id        Int               @id @default(autoincrement())
+  status    TransactionStatus
+  token     String            @unique
+  provider  String
+  amount    Int
+  timestamp DateTime
+  userId    Int
+  user      User              @relation(fields: [userId], references: [id])
 }
 
 model Balance {
@@ -74,8 +75,27 @@ model Balance {
   user   User @relation(fields: [userId], references: [id])
 }
 
+model Notification {
+  id        Int              @id @default(autoincrement())
+  userId    Int
+  user      User             @relation(fields: [userId], references: [id])
+  content   Json // Stores notification data as a JSON object
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+}
+
 enum TransactionStatus {
   SUCCESS
   FAILURE
   PROCESSING
+}
+
+enum NotificationType {
+  TRANSACTION
+  PAYMENT
+  SYSTEM
+  SECURITY
+  PROMOTIONAL
 }
