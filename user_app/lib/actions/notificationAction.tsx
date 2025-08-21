@@ -93,7 +93,7 @@ export type Notification = {
     type: $Enums.NotificationType;
     id: number;
     userId: number;
-    content: Prisma.JsonValue;
+    content: NotificationContent;
     isRead: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -104,3 +104,10 @@ export type NotificationResponse = {
     data?: Notification[];
     error?: string;
 };
+
+export type NotificationContent = {
+  message?: string
+  timestamp?: Date
+  direction?: 'RECEIVE' | 'SEND' | 'WALLET'
+  amount?: number
+}

@@ -18,6 +18,7 @@ export default function Layout({
   const { data: session, status } = useSession()
   const [nCount, setnCount] = useState<number | undefined>(0)
   const fullname = session?.user?.name || "User"
+  const [open, setOpen] = useState(false);
 
   const router = useRouter()
 
@@ -32,20 +33,18 @@ export default function Layout({
 
     // Clean up interval on component unmount
     return () => clearInterval(interval);
-  }, [session?.user]);
+  }, []);
 
 
   const fetchNotificationCount = async () => {
-    if (status === "authenticated" && session?.user?.id) {
       try {
-        const count = await getUserNotificationsCount(session.user.id);
+        const count = await getUserNotificationsCount();
         if (count.success) {
           setnCount(count.data);
         }
       } catch (error) {
         console.error("Failed to fetch notification count:", error);
       }
-    }
   };
 
   return (
@@ -54,7 +53,7 @@ export default function Layout({
         <>
           <NavItem icon={<Wallet size={20} />} onClick={()=>router.push('/dashboard')} >Portfolio</NavItem>
           <NavItem icon={<Receipt size={20} />} onClick={()=>router.push('/transactions')} >Transactions</NavItem>
-          <PopOverNotification nCount={nCount}/>
+          <PopOverNotification nCount={nCount} open={open} onOpen={setOpen} fetchNotificationCount={fetchNotificationCount}/>
           <NavItem icon={<ArrowRightLeft size={20} />} onClick={()=>router.push('/transfer')} >Transfer</NavItem>
         </>
       } footNavigationChild={

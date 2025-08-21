@@ -98,8 +98,10 @@ export async function p2pTransfer(to: string, amount: number , pin: string) {
             data: {
                 userId: Number(toUser?.id),
                 content: {
-                    type: "P2P_TRANSFER",
-                    message: `You received ₹${amount} from ${fromUser?.name || "a user"}.`
+                    message: `You received ₹${amount} from ${fromUser?.name || "a user"}.`,
+                    timestamp: new Date(),
+                    direction: "RECEIVE",
+                    amount: amount,
                 },
                 type: "PAYMENT",
             }
