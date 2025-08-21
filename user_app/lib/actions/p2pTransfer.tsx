@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "../auth";
 import { prisma } from '@/lib/prisma'
 import bcrypt from 'bcrypt'
-import { createNotification } from "./notificationAction";
 
 export async function p2pTransfer(to: string, amount: number , pin: string) {
     try {
@@ -31,7 +30,8 @@ export async function p2pTransfer(to: string, amount: number , pin: string) {
                 id: Number(from)
             },
             select:{
-                pin: true
+                pin: true,
+                name: true
             }
         })
 
@@ -93,13 +93,17 @@ export async function p2pTransfer(to: string, amount: number , pin: string) {
             })
 
         })
-        
-        await createNotification({
-            userId: toUser?.id,
-            message: `You have received ${amount} from ${from}`,
-            type: "TRANSFER",
-            relatedId: ""
-        });
+
+        await prisma.notification.create({
+            data: {
+                userId: Number(toUser?.id),
+                content: {
+                    type: "P2P_TRANSFER",
+                    message: `You received ₹${amount} from ${fromUser?.name || "a user"}.`
+                },
+                type: "PAYMENT",
+            }
+        })
 
         return {
             status: 200,

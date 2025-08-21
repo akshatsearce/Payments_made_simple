@@ -1,113 +1,106 @@
 "use server"
-import { getRedisClient } from "../redis";
+import { prisma } from '@/lib/prisma'
+import { getServerSession } from 'next-auth';
+import { NEXT_AUTH } from '../auth';
 
-export interface NotificationProp {
-  id: string;
-  userId: number;
-  message: string;
-  type: string;
-  isRead: boolean;
-  createdAt: number; // timestamp
-  relatedId?: string;
-}
+export async function getUserNotifications(limit = 50) {
 
-const NOTIFICATION_EXPIRY = 60 * 60 * 24 * 30; // 30 days in seconds
-
-/**
- * Creates a notification for a user
- */
-export async function createNotification({
-  userId,
-  message,
-  type,
-  relatedId,
-}: {
-  userId: number;
-  message: string;
-  type: string;
-  relatedId?: string;
-}) {
   try {
-    const redis = await getRedisClient()
-    const notificationId = `notification:${crypto.randomUUID()}`;
-    const notification: NotificationProp = {
-      id: notificationId,
-      userId,
-      message,
-      type,
-      isRead: false,
-      createdAt: Date.now(),
-      relatedId,
+    const session = await getServerSession(NEXT_AUTH)
+    if (!session || !session.user || !session.user.id) {
+      return {
+        success: false,
+        error: "User not authenticated"
+      };
+    }
+    const notifications = await prisma.notification.findMany({
+      where: {
+        userId: Number(session.user.id),
+        isRead: false,
+      },
+      take: limit,
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+
+    return {
+      success: true,
+      data: notifications
     };
-
-    // Store the notification with expiry
-    await redis.set(notificationId, JSON.stringify(notification), {
-      EX: NOTIFICATION_EXPIRY,
-    });
-
-    // Add to user's notification list
-    await redis.lPush(`user:${userId}:notifications`, notificationId);
-    
-
-    return { success: true, notification };
-  } catch (error) {
-    console.error('Failed to create notification:', error);
-    return { success: false, error: 'Failed to create notification' };
+  }
+  catch (error) {
+    console.error("Error fetching user notifications:", error);
+    return {
+      success: false,
+      error: "Failed to fetch notifications"
+    };
   }
 }
 
-/**
- * Marks a notification as read
- */
-export async function markNotificationAsRead(notificationId: string) {
+export async function markNotificationAsRead(notificationId: number) {
   try {
-    const redis = await getRedisClient()
-    const notificationData = await redis.get(notificationId);
-    if (!notificationData) {
-      return { success: false, error: 'Notification not found' };
+    await prisma.notification.update({
+      where: { id: notificationId },
+      data: { isRead: true }
+    });
+    return {
+      success: true,
+      message: "Notification marked as read"
+    };
+  } catch (error) {
+    console.error("Error marking notification as read:", error);
+    return {
+      success: false,
+      error: "Failed to mark notification as read"
+    };
+  }
+}
+
+export async function getUserNotificationsCount() {
+
+  try{
+    const session = await getServerSession(NEXT_AUTH)
+    if (!session || !session.user || !session.user.id) {
+      return {
+        success: false,
+        error: "User not authenticated"
+      };
     }
 
-    const notification: NotificationProp = JSON.parse(notificationData);
-    notification.isRead = true;
-
-    await redis.set(notificationId, JSON.stringify(notification), {
-      EX: NOTIFICATION_EXPIRY,
+    const count = await prisma.notification.count({
+      where: {
+        userId: Number(session.user.id),
+        isRead: false,
+      }
     });
-
-    return { success: true };
+    return {
+      success: true,
+      data: count
+    };
   } catch (error) {
-    console.error('Failed to mark notification as read:', error);
-    return { success: false, error: 'Failed to mark notification as read' };
+    console.error("Error fetching user notifications count:", error);
+    return {
+      success: false,
+      error: "Failed to fetch notifications count"
+    };
   }
 }
 
-/**
- * Gets all notifications for a user
- */
-export async function getUserNotifications(userId: number, limit = 50) {
-  try {
-    // Get notification IDs for this user (most recent first, limited)
-    const redis = await getRedisClient()
-    const notificationIds = await redis.lRange(`user:${userId}:notifications`, 0, limit - 1);
-    
-    if (!notificationIds.length) {
-      return { success: true, notifications: [] };
-    }
+import type { $Enums, Prisma } from "@prisma/client";
 
-    // Get notification data in bulk
-    const notificationData = await Promise.all(
-      notificationIds.map(id => redis.get(id))
-    );
+export type Notification = {
+    type: $Enums.NotificationType;
+    id: number;
+    userId: number;
+    content: Prisma.JsonValue;
+    isRead: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+};
 
-    // Parse and filter out any null values (expired notifications)
-    const notifications = notificationData
-      .filter(Boolean)
-      .map(data => JSON.parse(data as string) as NotificationProp)
-      .sort((a, b) => b.createdAt - a.createdAt); // Sort by createdAt desc
-
-    return { success: true, notifications };
-  } catch (error) {
-    console.error('Failed to get notifications:', error);
-    return { success: false, error: 'Failed to get notifications' };
-  }
-}
+export type NotificationResponse = {
+    success: boolean;
+    data?: Notification[];
+    error?: string;
+};
