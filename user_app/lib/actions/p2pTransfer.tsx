@@ -30,7 +30,8 @@ export async function p2pTransfer(to: string, amount: number , pin: string) {
                 id: Number(from)
             },
             select:{
-                pin: true
+                pin: true,
+                name: true
             }
         })
 
@@ -92,7 +93,21 @@ export async function p2pTransfer(to: string, amount: number , pin: string) {
             })
 
         })
-        return { 
+
+        await prisma.notification.create({
+            data: {
+                userId: Number(toUser?.id),
+                content: {
+                    message: `You received ₹${amount} from ${fromUser?.name || "a user"}.`,
+                    timestamp: new Date(),
+                    direction: "RECEIVE",
+                    amount: amount,
+                },
+                type: "PAYMENT",
+            }
+        })
+
+        return {
             status: 200,
             message: "Transfer Successfull"
         }

@@ -8,49 +8,41 @@ import { useRouter } from "next/navigation";
 
 interface NavItemProps {
   href?: string;
-  onClick?: ()=>{};
+  onClick?: ()=>void;
   icon: ReactNode;
   children: ReactNode;
   active?: boolean;
   notificationCount?: number;
   hasAction?: boolean;
 }
- 
-export const NavItem: React.FC<NavItemProps> = ({ href, icon, children, notificationCount, hasAction ,onClick }) => {
-  const pathname = usePathname(); // Get the current URL path
-  // For Pages Router, you would use: const { asPath } = useRouter();
-  const router = useRouter()
-  const active = pathname === href;
 
+interface NavItemProps {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  notificationCount?: number;
+  hasAction?: boolean;
+  onClick?: () => void;
+}
+
+export const NavItem: React.FC<NavItemProps> = ({ icon, children, notificationCount, hasAction, onClick }) => {
   return (
-    <div onClick={()=>{
-      if (href){
-        router.push(href)
-      }
-      if(onClick)
-      {
-        onClick()
-      }
-    }}>
-      <div
-        className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors duration-200 ${
-          active ? 'bg-indigo-600 text-white' : 'text-gray-400 hover:bg-gray-800'
-        }`}
-      >
-        {icon}
-        <span className="ml-4 flex-1 font-medium">{children}</span>
-        {notificationCount && (
-          <span className="bg-[#BDFD2F] text-gray-900 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
-            {notificationCount}
-          </span>
-        )}
-        {hasAction && (
-          <div className="bg-gray-700 rounded-md p-0.5">
-            <Plus size={16} className="text-gray-400" />
-          </div>
-        )}
-      </div>
-    </div>
+    <button
+      onClick={onClick}
+      className={`flex items-center w-full p-3 rounded-lg cursor-pointer transition-colors duration-200 text-gray-400 hover:bg-gray-800`}
+    >
+      {icon}
+      <span className="ml-4 flex-1 font-medium text-left">{children}</span>
+      {notificationCount && (
+        <span className="bg-[#BDFD2F] text-gray-900 text-xs font-bold rounded-full h-6 w-6 flex items-center justify-center">
+          {notificationCount}
+        </span>
+      )}
+      {hasAction && (
+        <div className="bg-gray-700 rounded-md p-0.5">
+          <Plus size={16} className="text-gray-400" />
+        </div>
+      )}
+    </button>
   );
 };
 
