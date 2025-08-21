@@ -3,10 +3,9 @@ import SideBar from "@/components/sideBarComp";
 import { JSX, useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { NavItem } from "@/components/sideBarComp";
-import { Wallet, ArrowRightLeft, Bell, Receipt, HelpCircle, Settings, LogOut } from "lucide-react";
+import { Wallet, ArrowRightLeft, Receipt, HelpCircle, Settings, LogOut } from "lucide-react";
 import { getUserNotificationsCount } from "@/lib/actions/notificationAction";
 import PopOverNotification from "@/components/utilUi/popOver";
-import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 
 export default function Layout({
