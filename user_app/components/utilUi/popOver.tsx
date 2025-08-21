@@ -35,7 +35,7 @@ export default function PopOverNotification({ nCount ,open, onOpen , fetchNotifi
         try {
             await markNotificationAsRead(notificationId)
 
-            const response: NotificationResponse = await getUserNotifications();
+            const response = await getUserNotifications();
             if (response.success && response.data) {
                 setNotifications(response.data);
                 await fetchNotificationCount()
@@ -52,7 +52,7 @@ export default function PopOverNotification({ nCount ,open, onOpen , fetchNotifi
     useEffect(() => {
         if (open) {
             const fetchNotifications = async () => {
-                const response: NotificationResponse = await getUserNotifications();
+                const response = await getUserNotifications();
                 if (response.success && response.data) {
                     setNotifications(response.data);
                 }

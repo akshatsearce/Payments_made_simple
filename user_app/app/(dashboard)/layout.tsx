@@ -29,7 +29,7 @@ export default function Layout({
     // Set up polling interval (every 30 seconds)
     const interval = setInterval(() => {
       fetchNotificationCount();
-    }, 30000);
+    }, 10000);
 
     // Clean up interval on component unmount
     return () => clearInterval(interval);
