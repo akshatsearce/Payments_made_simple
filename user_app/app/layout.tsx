@@ -1,4 +1,6 @@
+import { ThemeToggleButton } from "@/components/shared/themeToggle";
 import "./globals.css";
+import Providers from "./providers";
 
 export default function RootLayout({
   children,
@@ -6,9 +8,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
-        {children}
+        <Providers>
+          {children}
+          <ThemeToggleButton />
+        </Providers>
       </body>
     </html>
   );
