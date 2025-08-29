@@ -1,5 +1,6 @@
 'use client'
 
+import { SidebarProvider } from "@/components/ui/sidebar"
 import { SessionProvider } from "next-auth/react"
 import { ThemeProvider } from "next-themes"
 

@@ -3,7 +3,6 @@ import { SignupForm } from "@/components/forms/signupForm";
 import { SignUpAction } from "@/lib/actions/signUp";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { set } from "zod";
 
 export default function SignupPage() {
 
@@ -37,10 +36,10 @@ export default function SignupPage() {
             <div className="flex flex-col gap-4 p-6 md:p-10">
                 <div className="flex justify-center gap-2 md:justify-start">
                     <a href="#" className="flex items-center gap-2 font-medium">
-                        <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
+                        <div className="bg-white text-primary-foreground flex size-6 items-center justify-center rounded-md p-1">
                             <img
                                 src='s_logo.svg'
-                                className="bg-background"
+                                
                             ></img>
                         </div>
                         Payments Made Simple
@@ -59,7 +58,7 @@ export default function SignupPage() {
                 <img
                     src="https://images.unsplash.com/photo-1755097100741-2dd79bfce378?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxmZWF0dXJlZC1waG90b3MtZmVlZHwzNnx8fGVufDB8fHx8fA%3D%3D"
                     alt="Image"
-                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+                    className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.6]"
                 />
             </div>
         </div>
