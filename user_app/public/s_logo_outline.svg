@@ -1,0 +1,12 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400">
+	<title>New Project</title>
+	<style>
+		.s0 { fill: none;stroke: #000000;stroke-linecap: square;stroke-linejoin: bevel;stroke-width: 10 } 
+	</style>
+	<g id="Layer 1">
+		<g id="Folder 1">
+			<path id="Shape 1" fill-rule="evenodd" class="s0" d="m194.5 11.6c0-1.5 95.9 0 95.9 0 0 0 2.8 96.5 1.5 96.6-61.3 5.1-93 46.5-93 91.7 0 1.5-95.8 2.2-95.8 2.2 0 0-0.3-92.5 0-92.5 51.8 0 91.4-36.9 91.4-98z"/>
+			<path id="Shape 1 copy" fill-rule="evenodd" class="s0" d="m198.9 199.9c0-1.5 95.9 0 95.9 0 0 0 2.8 96.5 1.5 96.6-61.3 5.2-93 46.5-93 91.8 0 1.4-95.8 2.2-95.8 2.2 0 0-0.3-92.5 0-92.5 51.8 0 91.4-37 91.4-98.1z"/>
+		</g>
+	</g>
+</svg>
