@@ -1,18 +1,35 @@
 'use client'
 import { SignupForm } from "@/components/forms/signupForm";
+import { SignUpAction } from "@/lib/actions/signUp";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { set } from "zod";
 
 export default function SignupPage() {
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault(); // Prevent page reload
+    const router = useRouter();
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState<boolean>(false);
+
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        const data = {
-            phone: formData.get("phone"),
-            name: formData.get("name"),
-            password: formData.get("password"),
-            pin: formData.get("pin"),
-        };
-        console.log("Form Data:", data);
+        const formdata = {
+            number: formData.get('phone')?.toString() || "",
+            name: formData.get('name')?.toString() || "",
+            password: formData.get('password')?.toString() || "",
+            pin: formData.get('pin')?.toString() || ""
+        }
+        console.log(formdata)
+        setLoading(true);
+        const response = await SignUpAction(formdata);
+        setLoading(false);
+        if (response.status === 201) {
+            router.push('/signin')
+        } else {
+            setError(response.error || "Unknown error")
+        }
+
     };
 
     return (
@@ -31,7 +48,10 @@ export default function SignupPage() {
                 </div>
                 <div className="flex flex-1 items-center justify-center">
                     <div className="w-full max-w-xs">
-                        <SignupForm onSubmit={handleSubmit}/>
+                        <SignupForm onSubmit={handleSubmit} loading={loading} />
+                        <div className="flex text-destructive justify-center">
+                            <span>{error}</span>
+                        </div>
                     </div>
                 </div>
             </div>
