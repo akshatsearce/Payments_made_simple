@@ -1,0 +1,51 @@
+import { Wallet, Search, Settings, ArrowLeftRight, Receipt } from "lucide-react"
+import { SidebarContent, SidebarGroup, SidebarMenuItem,SidebarMenuButton, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from "@/components/ui/sidebar"
+
+export default function AppBarContent(){
+
+    const items = [
+  {
+    title: "Portfolio",
+    url: "#",
+    icon: Wallet,
+  },
+  {
+    title: "Transactions",
+    url: "#",
+    icon: Receipt,
+  },
+  {
+    title: "Transfer",
+    url: "#",
+    icon: ArrowLeftRight,
+  },
+  {
+    title: "Search",
+    url: "#",
+    icon: Search,
+  },
+
+]
+
+    return (
+        <SidebarContent>
+            <SidebarGroup>
+                <SidebarGroupLabel>Application</SidebarGroupLabel>
+                <SidebarGroupContent>
+                    <SidebarMenu>
+                        {items.map((item) => (
+                            <SidebarMenuItem key={item.title} className="flex justify-center">
+                                <SidebarMenuButton asChild>
+                                    <a href={item.url} className="h-10 ">
+                                        <item.icon className="h-6 w-6"/>
+                                        <span>{item.title}</span>
+                                    </a>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        ))}
+                    </SidebarMenu>
+                </SidebarGroupContent>
+            </SidebarGroup>
+        </SidebarContent>
+    )
+}
