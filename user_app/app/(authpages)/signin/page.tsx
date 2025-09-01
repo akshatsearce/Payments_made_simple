@@ -25,7 +25,7 @@ export default function LoginPage() {
     if(response?.error){
       setError("Invalid Phone number or Password");
     }else{
-      router.push('/');
+      router.push('/dashboard');
     }
 
   }
@@ -34,7 +34,7 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium">
-            <div className="bg-white text-primary-foreground flex size-6 items-center justify-center rounded-md p-1">
+            <div className="bg-accent text-primary-foreground flex size-6 items-center justify-center rounded-md p-1">
               <img
                 src='s_logo.svg'
               ></img>

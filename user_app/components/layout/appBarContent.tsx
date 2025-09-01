@@ -1,5 +1,6 @@
 import { Wallet, Search, Settings, ArrowLeftRight, Receipt } from "lucide-react"
 import { SidebarContent, SidebarGroup, SidebarMenuItem,SidebarMenuButton, SidebarGroupContent, SidebarGroupLabel, SidebarMenu } from "@/components/ui/sidebar"
+import Link from "next/link"
 
 export default function AppBarContent(){
 
@@ -36,10 +37,10 @@ export default function AppBarContent(){
                         {items.map((item) => (
                             <SidebarMenuItem key={item.title} className="flex justify-center">
                                 <SidebarMenuButton asChild>
-                                    <a href={item.url} className="h-10 ">
+                                    <Link href={item.url} className="h-10">
                                         <item.icon className="h-6 w-6"/>
                                         <span>{item.title}</span>
-                                    </a>
+                                    </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
                         ))}

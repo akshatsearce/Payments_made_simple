@@ -11,7 +11,7 @@ export function LoginForm({
   return (
     <form className={cn("flex flex-col gap-6", className)} {...props}>
       <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
+        <h1 className="text-2xl font-bold"> <span className="text-accent">Login</span> to your account</h1>
         <p className="text-muted-foreground text-sm text-balance">
           Enter your Phone Number below to login to your account
         </p>
@@ -33,7 +33,7 @@ export function LoginForm({
           </div>
           <Input id="password" name="password" type="password" required />
         </div>
-        <Button type="submit" className="w-full" disabled={loading}>
+        <Button type="submit" className="w-full bg-accent" disabled={loading}>
           {loading ? (
             <>
               <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">

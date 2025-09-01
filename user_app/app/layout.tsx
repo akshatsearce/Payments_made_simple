@@ -12,7 +12,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
-          <ThemeToggleButton />
+          <ThemeToggleButton/>
         </Providers>
       </body>
     </html>

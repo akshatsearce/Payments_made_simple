@@ -12,7 +12,7 @@ export default function Layout({
     return (
         <SidebarProvider>
             <AppSidebar />
-            <SidebarTrigger />
+            <SidebarTrigger className="z-50 fixed"/>
             {children}
         </SidebarProvider>
     )
