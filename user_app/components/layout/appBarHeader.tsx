@@ -19,8 +19,8 @@ export default function AppBarHeader() {
                         <div className="grid flex-1 text-left text-sm leading-tight">
                             <span className="truncate font-medium">Pay Simple</span>
                         </div>
-                        <div className="rounded-full bg-accent w-8 flex justify-center">
-                            <span className="text-xs text-accent-foreground">Pro</span>
+                        <div className="rounded-full bg-accent w-10 flex justify-center">
+                            <span className="text-tiny font-bold text-accent-foreground">USER</span>
                         </div>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
