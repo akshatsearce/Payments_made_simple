@@ -5,7 +5,7 @@ import { ArrowDown, ArrowUp, Cpu, Wifi } from "lucide-react";
 
 export default function BalanceCard({ balance }: { balance: number }) {
     return (
-        <Card>
+        <Card className="bg-background/80">
             <CardContent className="">
                 <div className="flex flex-col gap-8 items-center md:flex-row">
                     <div className="flex flex-col items-center gap-2 md:items-start">
