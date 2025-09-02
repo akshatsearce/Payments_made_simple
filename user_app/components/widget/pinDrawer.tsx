@@ -17,17 +17,17 @@ export default function PinDrawer({pin, setPin , buttonHeader , logo , onClick, 
     return <>
         <Drawer>
             <DrawerTrigger asChild>
-                <Button variant="outline"
-                className="w-full bg-lime-300 text-lg font-semibold text-black hover:bg-indigo-600"
+                <Button 
+                className="w-full bg-accent text-accent-foreground text-lg font-semibold"
                 disabled={disabled}
                 >{buttonHeader}
-                    <div className="ml-2 flex items-center justify-center h-8 w-8 rounded-full bg-black">
+                    <div className="ml-2 flex items-center justify-center h-8 w-8 rounded-full bg-background">
                         {/* <logo className="h-6 w-6 text-white" /> */}
                         {logo}
                     </div>
                 </Button>
             </DrawerTrigger>
-            <DrawerContent className="bg-[#111111] text-white border-0">
+            <DrawerContent className=" border-0">
                 <div className="mx-auto w-full max-w-sm">
                     <DrawerHeader>
                         <DrawerTitle>Enter Pin</DrawerTitle>
@@ -47,7 +47,7 @@ export default function PinDrawer({pin, setPin , buttonHeader , logo , onClick, 
                     </div>
                     <DrawerFooter>
                         <DrawerClose asChild>
-                            <Button className="bg-lime-300 text-black font-bold hover:bg-indigo-600" onClick={onClick}>Submit</Button>
+                            <Button className="bg-accent text-accent-foreground font-bold " onClick={onClick}>Submit</Button>
                             {/* <Button variant="secondary" className="hover:bg-zinc-900">Cancel</Button> */}
                         </DrawerClose>
                     </DrawerFooter>

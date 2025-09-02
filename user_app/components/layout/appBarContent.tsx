@@ -17,7 +17,7 @@ export default function AppBarContent(){
   },
   {
     title: "Transfer",
-    url: "#",
+    url: "/transfer",
     icon: ArrowLeftRight,
   },
   {
