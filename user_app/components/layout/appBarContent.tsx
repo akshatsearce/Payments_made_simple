@@ -7,12 +7,12 @@ export default function AppBarContent(){
     const items = [
   {
     title: "Portfolio",
-    url: "#",
+    url: "/dashboard",
     icon: Wallet,
   },
   {
     title: "Transactions",
-    url: "#",
+    url: "/transactions",
     icon: Receipt,
   },
   {
