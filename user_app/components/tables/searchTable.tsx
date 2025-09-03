@@ -1,9 +1,10 @@
-import { SearchByName } from "@/lib/actions/searchAction"
+import { SearchByName, SearchByPhone } from "@/lib/actions/searchAction"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
 
 export default async function SearchTable({query}:{query : string}) {
 
-    const users = await SearchByName(query)
+    // const users = await SearchByName(query)
+    const users = await SearchByPhone(query)
 
 
     return <Table>

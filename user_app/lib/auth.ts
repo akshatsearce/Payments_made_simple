@@ -2,6 +2,8 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import { prisma } from "@/lib/prisma"
 import bcrypt from 'bcrypt';
 import { z } from "zod";
+import { computeHmac, decryptPhoneNumber } from './encryption';
+import { de } from 'zod/v4/locales';
 
 
 const CredSchema = z.object({
@@ -28,7 +30,7 @@ export const NEXT_AUTH = {
                     }
                     const {number , password} = parsed_cred.data
                     const user = await prisma.user.findUnique({
-                        where: {number},
+                        where: {numberBlindIndex: computeHmac(number)},
                         select:{
                             id: true,
                             number: true,
@@ -46,10 +48,10 @@ export const NEXT_AUTH = {
                         console.log("Invalid Password")
                         return null
                     }
-
+                    const decryptedNumber = decryptPhoneNumber(user.number)
                     return {
                         id: user.id.toString(),
-                        number: user.number,
+                        number: decryptedNumber,
                         name: user.name,
                     }
 

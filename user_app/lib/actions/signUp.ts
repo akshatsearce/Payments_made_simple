@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { prisma } from '@/lib/prisma';
 import bcrypt from 'bcrypt'
+import { computeHmac, encryptPhoneNumber } from "../encryption";
 
 const UserSchema = z.object({
   number: z.string().regex(/^\d{10}$/, 'Phone number must be exactly 10 digits'),
@@ -25,9 +26,10 @@ export async function SignUpAction(req: SignUpProp){
             throw new Error(result.error.issues[0].message)
         }
         const {number, password, name , pin} = result.data
+        const phoneHmac = computeHmac(number)
 
         const existingUser = await prisma.user.findUnique({
-            where: {number}
+            where: {numberBlindIndex: phoneHmac}
         })
 
         if(existingUser){
@@ -37,10 +39,13 @@ export async function SignUpAction(req: SignUpProp){
         const hashedPassword = await bcrypt.hash(password,10)
         const hashedPin = await bcrypt.hash(pin,10)
 
+        const encryptedNumber = encryptPhoneNumber(number)
+
         const newUser = await prisma.$transaction(async(tx)=>{
             const user = await tx.user.create({
                 data:{
-                    number,
+                    number: encryptedNumber,
+                    numberBlindIndex: phoneHmac,
                     name,
                     password: hashedPassword,
                     pin: hashedPin

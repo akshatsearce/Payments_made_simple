@@ -38,3 +38,39 @@ export async function SearchByName(params: string) {
     }
 
 }
+
+
+export async function SearchByPhone(params: string) {
+    if (!params || params.trim() === '') {
+        return {
+            status: true,
+            data: [],
+        };
+    }
+    try {
+        const users = await prisma.user.findMany({
+            where: {
+                number: {
+                    contains: params, // Partial matching for phone numbers
+                },
+            },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                number: true,
+            },
+            take: 5
+        });
+
+        return {
+            status: true,
+            data: users,
+        };
+    } catch (e) {
+        return {
+            status: false,
+            error: error(e),
+        };
+    }
+}

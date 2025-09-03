@@ -18,6 +18,7 @@ model User {
   email              String?              @unique
   name               String?
   number             String               @unique
+  numberBlindIndex   String               @unique
   password           String
   pin                String
   OnRampTransaction  OnRampTransaction[]
