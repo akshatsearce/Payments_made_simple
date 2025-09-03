@@ -1,6 +1,7 @@
 'use server'
 import { error } from "console";
 import { prisma } from "../prisma";
+import { computeHmac, decryptPhoneNumber } from "../encryption";
 
 export async function SearchByName(params: string) {
     if (!params || params.trim() === '') {
@@ -24,6 +25,10 @@ export async function SearchByName(params: string) {
                 number: true,
             },
             take: 5
+        });
+
+        users.forEach(user => {
+            user.number = decryptPhoneNumber(user.number);
         });
 
         return {
@@ -50,8 +55,8 @@ export async function SearchByPhone(params: string) {
     try {
         const users = await prisma.user.findMany({
             where: {
-                number: {
-                    contains: params, // Partial matching for phone numbers
+                numberBlindIndex: {
+                    contains: computeHmac(params),
                 },
             },
             select: {
@@ -61,6 +66,10 @@ export async function SearchByPhone(params: string) {
                 number: true,
             },
             take: 5
+        });
+
+        users.forEach(user => {
+            user.number = decryptPhoneNumber(user.number);
         });
 
         return {

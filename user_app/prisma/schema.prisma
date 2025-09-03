@@ -27,7 +27,16 @@ model User {
   receivedTransfers  p2pTransfer[]        @relation(name: "ToUserRelation")
   OffRampTransaction OffRampTransaction[]
   Notification       Notification[]
+  phoneIndexes       PhoneIndex[]
 }
+
+model PhoneIndex {
+  id           Int    @id @default(autoincrement())
+  userId       Int
+  partialHash  String  // Indexed for fast searches; not unique as prefixes can overlap
+  user         User   @relation(fields: [userId], references: [id])
+  @@index([partialHash])
+} 
 
 model Merchant {
   id    Int     @id @default(autoincrement())

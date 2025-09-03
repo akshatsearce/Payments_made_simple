@@ -3,8 +3,6 @@ import { prisma } from "@/lib/prisma"
 import bcrypt from 'bcrypt';
 import { z } from "zod";
 import { computeHmac, decryptPhoneNumber } from './encryption';
-import { de } from 'zod/v4/locales';
-
 
 const CredSchema = z.object({
     number: z.string().regex(/^\+?[1-9]\d{1,14}$/, 'Invalid phone number'),
