@@ -3,7 +3,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { getServerSession } from "next-auth";
 import { NEXT_AUTH } from "@/lib/auth";
 import { MoveDownLeft, MoveUpRight } from "lucide-react";
-import { RequestActionButton } from "./requestAction";
+import { RequestActionButton } from "../widget/requestAction";
 
 
 export default async function TransactionTable() {

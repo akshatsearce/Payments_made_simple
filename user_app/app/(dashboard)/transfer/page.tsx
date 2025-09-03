@@ -3,9 +3,10 @@ import SendMoney from "@/components/widget/sendMoneyCard";
 
 export default function(){
     return (
-        <div>
+        <div className="flex justify-evenly">
             <SendMoney/>
             <RequestMoney/>
         </div>
+        
     )
 }
